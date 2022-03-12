@@ -1,15 +1,4 @@
 {
-  "atomTranspilers": [
-    {
-      "transpiler": "atom-ts-transpiler",
-      "glob": "{!(node_modules)/**/,}*.ts?(x)",
-      "options": {
-        "verbose": true
-      }
-    }
-  ],
-  "bugs": "https://github.com/bacadra/atom-pdf-viewer/issues",
-  "bundleDependencies": false,
   "configSchema": {
     "closeViewWhenFileDeleted": {
       "type": "boolean",
@@ -40,11 +29,6 @@
       "description": "The time in ms before reloading the PDF after the last detected change"
     }
   },
-  "dependencies": {
-    "atom-ts-transpiler": "1.5.2",
-    "typescript": "^3.5.3"
-  },
-  "deprecated": false,
   "description": "Atom PDF viewer based on PDF.js",
   "deserializers": {
     "PdfEditor": "deserialize"
@@ -54,8 +38,9 @@
   },
   "homepage": "https://github.com/bacadra/atom-pdf-viewer#readme",
   "repository": "https://github.com/bacadra/atom-pdf-viewer#readme",
+  "bugs": "https://github.com/bacadra/atom-pdf-viewer/issues",
   "license": "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007",
-  "main": "./src/main.ts",
+  "main": "./lib/main.js",
   "name": "pdf-viewer",
   "providedServices": {
     "pdfview": {
@@ -64,18 +49,6 @@
         "0.0.0": "providePdfEvents"
       }
     }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bacadra/atom-pdf-viewer.git"
-  },
-  "scripts": {
-    "build": "tsc",
-    "fix-lint": "prettier --check --write --ignore-path .gitignore **/*",
-    "lint": "prettier --check --ignore-path .gitignore **/*",
-    "postversion": "node script/postversion.js",
-    "preversion": "node script/preversion.js",
-    "watch": "tsc --watch"
   },
   "version": "0.0.0"
 }
