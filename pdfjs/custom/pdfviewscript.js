@@ -1,14 +1,11 @@
-// Hides "basic debug information" and other cruft logged by PDFjs
-console.log = () => {}
-
-(function(){
+console.log = () => {} // Hides "basic debug information" and other cruft logged by PDFjs
 
 window.onload = () => {
   PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
   PDFViewerApplicationOptions.set("enableWebGL", true);
   PDFViewerApplicationOptions.set("externalLinkTarget", 4);
   PDFViewerApplicationOptions.set("eventBusDispatchToDOM", true);
-  PDFViewerApplicationOptions.set("renderInteractiveForms", false); // TODO: Can these be saved?
+  PDFViewerApplicationOptions.set("renderInteractiveForms", false);
   PDFViewerApplicationOptions.set("isEvalSupported", false);
   PDFViewerApplicationOptions.set("disablePageMode", 2);
 }
@@ -52,7 +49,7 @@ async function refreshContents(filepath) {
     throw new Error(`Expected string as filepath, got ${filepath}`);
   }
 
-  if (window.frameElement.style.display === "none") {
+  if (window.frameElement && window.frameElement.style.display === "none") {
     // we are not in view; don't bother updating
     lastFilepath = filepath;
     styleObserver.observe(window.frameElement, {
@@ -78,7 +75,6 @@ function getDocumentParams() {
     scrollTop: container.scrollTop,
     scrollLeft: container.scrollLeft,
   };
-
   // When the PDF is incomplete (e.g., long rebuild), scale will be null. Probably.
   if (params.scale !== null) {
     return params;
@@ -95,9 +91,6 @@ function restoreFromParams({scale, scrollTop, scrollLeft}) {
 }
 
 function scrollToPosition({pageIndex, pointX, pointY, origin}) {
-  if (typeof pageIndex !== "number") {
-    throw new Error("Expected page number");
-  }
   const pageView = PDFViewerApplication.pdfViewer.getPageView(pageIndex);
 
   const clientHeight = PDFViewerApplication.appConfig.mainContainer.clientHeight;
@@ -184,5 +177,3 @@ document.addEventListener("click", evt => {
     sendMessage("link", {href: srcElement.href});
   }
 });
-
-})();

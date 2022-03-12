@@ -21051,7 +21051,7 @@ function webViewerLoad() {
   try {
     parent.document.dispatchEvent(event);
   } catch (ex) {
-    console.error("webviewerloaded: ".concat(ex));
+    // console.error("webviewerloaded: ".concat(ex)); // FIX
     document.dispatchEvent(event);
   }
 

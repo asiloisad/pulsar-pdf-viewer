@@ -186,7 +186,7 @@ var WorkerMessageHandler = /*#__PURE__*/function () {
 
       function ensureNotTerminated() {
         if (terminated) {
-          throw new Error("Worker was terminated");
+          // throw new Error("Worker was terminated"); // FIX
         }
       }
 
@@ -441,7 +441,7 @@ var WorkerMessageHandler = /*#__PURE__*/function () {
               handler.send("DocException", ex);
             });
           } else if (ex instanceof _util.InvalidPDFException || ex instanceof _util.MissingPDFException || ex instanceof _util.UnexpectedResponseException || ex instanceof _util.UnknownErrorException) {
-            handler.send("DocException", ex);
+            // handler.send("DocException", ex); // FIX
           } else {
             handler.send("DocException", new _util.UnknownErrorException(ex.message, ex.toString()));
           }
