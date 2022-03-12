@@ -8,11 +8,10 @@
     "fileExtensions": {
       "type": "array",
       "default": [
-        "pdf",
-        "ai"
+        "pdf"
       ],
       "title": "PDF file extensions",
-      "description": "Files with these extensions will be opened as PDFs.",
+      "description": "Files with these extensions will be opened as PDFs",
       "items": {
         "type": "string"
       }
@@ -25,11 +24,11 @@
     },
     "autoreloadDebounce": {
       "type": "number",
-      "default": 200,
+      "default": 300,
       "description": "The time in ms before reloading the PDF after the last detected change"
     }
   },
-  "description": "Atom PDF viewer based on PDF.js",
+  "description": "Atom PDF viewer based on PDF.js inc. parameters",
   "deserializers": {
     "PdfEditor": "deserialize"
   },
@@ -50,5 +49,14 @@
       }
     }
   },
+  "keywords": [
+    "bacadra",
+    "pdf",
+    "pdfjs",
+    "viewer",
+    "synctex",
+    "sofisitk",
+    "nameddest"
+  ],
   "version": "0.0.2"
 }
