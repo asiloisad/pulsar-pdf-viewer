@@ -33,7 +33,7 @@
   "homepage": "https://github.com/bacadra/atom-pdf-viewer#readme",
   "repository": "https://github.com/bacadra/atom-pdf-viewer",
   "bugs": "https://github.com/bacadra/atom-pdf-viewer/issues",
-  "license": "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007",
+  "license": "GPL-3.0-or-later",
   "main": "./lib/main.js",
   "name": "pdf-viewer",
   "providedServices": {
