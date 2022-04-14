@@ -55,6 +55,7 @@ atom-workspace {
   --sidebar-width: 350px;
   --main-color: #424243;
   --body-bg-color: #eaeaeb;
+  --errorWrapper-bg-color: #eaeaeb;
   --toolbar-icon-bg-color: #424243;
   --toolbar-icon-hover-bg-color: #424243;
   --sidebar-narrow-bg-color: #fafafa;

@@ -11,7 +11,7 @@
 
   --main-color: @text-color;
   --body-bg-color: @app-background-color;
-  // --errorWrapper-bg-color: rgba(169, 14, 14, 1);
+  --errorWrapper-bg-color: @app-background-color;
   // --progressBar-color: rgba(0, 96, 223, 1);
   // --progressBar-indeterminate-bg-color: rgba(40, 40, 43, 1);
   // --progressBar-indeterminate-blend-color: rgba(20, 68, 133, 1);
@@ -61,8 +61,3 @@ html[dir="rtl"]
   #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
   right: 0;
 }
-
-// #viewerContainer > #viewer > .page > .canvasWrapper > canvas {
-//     filter: grayscale(100%);
-//     filter: invert(100%);
-// }

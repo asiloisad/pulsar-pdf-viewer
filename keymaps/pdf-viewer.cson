@@ -1,0 +1,2 @@
+'atom-text-editor[data-grammar~="latex"]':
+  'alt-f7': 'pdf-viewer:synctex'
