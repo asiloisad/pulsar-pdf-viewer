@@ -23,22 +23,24 @@ window.addEventListener("message", event => {
 });
 
 function refreshContents(filePath) {
-  if (typeof filePath !== "string") {
-    throw new Error(`Expected string as filepath, got ${filePath}`);
-  }
-  if (window.frameElement && window.frameElement.style.display === "none") {
-    // we are not in view; don't bother updating
-    lastFilepath = filePath;
-    styleObserver.observe(window.frameElement, {
-      attributes: true,
-      attributeFilter: ["style"],
-    });
-    return;
-  }
-  lastParams = getDocumentParams() || lastParams;
-  PDFViewerApplication.open(filePath);
-  document.addEventListener("pagesinit",() => {restoreFromParams(lastParams)},{once: true, passive: true}
-  );
+  try {
+    if (typeof filePath !== "string") {
+      throw new Error(`Expected string as filepath, got ${filePath}`);
+    }
+    if (window.frameElement && window.frameElement.style.display === "none") {
+      // we are not in view; don't bother updating
+      lastFilepath = filePath;
+      styleObserver.observe(window.frameElement, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+      return;
+    }
+    lastParams = getDocumentParams() || lastParams;
+    PDFViewerApplication.open(filePath);
+    document.addEventListener("pagesinit",() => {restoreFromParams(lastParams)},{once: true, passive: true}
+    );
+  } catch (err) {}
 }
 
 function getDocumentParams() {
