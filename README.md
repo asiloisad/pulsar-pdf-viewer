@@ -1,6 +1,6 @@
 # pdf-viewer
 
-![title-pic](assets/title-pic.png)
+![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
 
 PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library including its viewer application, adapted for the Atom environment.
 
@@ -10,7 +10,7 @@ PDF files can be opened from the Atom user interface, e.g. from the project tree
 
 The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. This can be useful in many cases. To invert the document colours change the options in the package settings, use the `pdf-viewer.invertMode` from command-pallette or press the `F2` if the PDf viewer is active.
 
-![title-pic](assets/dark-mode.png)
+![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
 ## Keyboard shortcuts
 
@@ -56,10 +56,10 @@ This package supports SyncTeX `.tex` and `.pdf` in both directions. From a text 
 
 For PDF files created by TeX using the `--synctex=1` option, a click on the PDF will take you to the corresponding source code. If the synctex command (part of modern TeX distributions) is in your PATH, this will work out of the box, otherwise you can configure the path to the synctex binary in the settings.
 
-![sofi-key](assets/latex-synctex.png)
+![sofi-key](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
 
 ## SOFiSTiK
 
 This package is adapted to support `sofistik-tools` for help functions using the search keywords at current scope. For more information see the package [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools).
 
-![sofi-key](assets/sofi-key.png)
+![sofi-key](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/sofi-key.png?raw=true)
