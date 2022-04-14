@@ -1,0 +1,68 @@
+@import "atom";
+@import "ui-variables";
+
+* {
+  box-sizing: inherit;
+  font-family: @font-family
+}
+
+:root {
+  --sidebar-width: 350px;
+
+  --main-color: @text-color;
+  --body-bg-color: @app-background-color;
+  // --errorWrapper-bg-color: rgba(169, 14, 14, 1);
+  // --progressBar-color: rgba(0, 96, 223, 1);
+  // --progressBar-indeterminate-bg-color: rgba(40, 40, 43, 1);
+  // --progressBar-indeterminate-blend-color: rgba(20, 68, 133, 1);
+  // --scrollbar-color: auto;
+  // --scrollbar-bg-color: auto;
+  --toolbar-icon-bg-color: @text-color;
+  --toolbar-icon-hover-bg-color: @text-color;
+
+  --sidebar-narrow-bg-color: @tab-background-color-active;
+  --sidebar-toolbar-bg-color: @tab-background-color-active;
+  --toolbar-bg-color: @tab-background-color-active;
+  --toolbar-border-color: @pane-item-border-color;
+  --button-hover-color: @button-background-color-hover;
+  --toggled-btn-color: @button-background-color-selected;
+  --toggled-btn-bg-color: @button-background-color-hover;
+  --toggled-hover-active-btn-color: @text-color;
+  --dropdown-btn-bg-color: @base-background-color;
+  --separator-color: @pane-item-border-color;
+  --field-color: @text-color;
+  --field-bg-color: @base-background-color;
+  --field-border-color: @pane-item-border-color;
+  --findbar-nextprevious-btn-bg-color: @button-background-color;
+  --treeitem-color: @text-color;
+  --treeitem-hover-color: @text-color;
+  --treeitem-selected-color: @text-color-highlight;
+  --treeitem-selected-bg-color: @background-color-selected;
+  --sidebaritem-bg-color: @tab-background-color-active;
+  --doorhanger-bg-color: @tab-background-color-active;
+  --doorhanger-border-color: @pane-item-border-color;
+  --doorhanger-hover-color: @text-color;
+  --doorhanger-hover-bg-color: @button-background-color-hover;
+  --doorhanger-separator-color: @tab-background-color-active;
+  // --overlay-button-border: 0 none;
+  --overlay-button-bg-color: @tab-background-color-active;
+  --overlay-button-hover-bg-color: @button-background-color-hover;
+}
+
+#outerContainer {
+  .scrollbars-visible-always(); // for Atom's scrollbar style
+}
+
+html[dir="ltr"]
+  #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
+  left: 0;
+}
+html[dir="rtl"]
+  #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
+  right: 0;
+}
+
+// #viewerContainer > #viewer > .page > .canvasWrapper > canvas {
+//     filter: grayscale(100%);
+//     filter: invert(100%);
+// }
