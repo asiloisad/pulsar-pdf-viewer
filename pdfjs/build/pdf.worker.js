@@ -443,7 +443,9 @@ var WorkerMessageHandler = /*#__PURE__*/function () {
           } else if (ex instanceof _util.InvalidPDFException || ex instanceof _util.MissingPDFException || ex instanceof _util.UnexpectedResponseException || ex instanceof _util.UnknownErrorException) {
             // handler.send("DocException", ex); // FIX
           } else {
-            handler.send("DocException", new _util.UnknownErrorException(ex.message, ex.toString()));
+						try {
+							handler.send("DocException", new _util.UnknownErrorException(ex.message, ex.toString()));
+						} catch (err) {}
           }
         }
 
