@@ -42,7 +42,8 @@ After showing the sidebar, click on the "Show document outline" button (Show doc
 Additional keyboard shortcuts has been introduced:
 
 * `F1`: invoke `command-palette:toggle`;
-* `F2`: invoke `pdf-viewer:invert-colors`;
+* `F2`: invoke `pdf-viewer:invert-colors`; invert colors for all pdf-viewers in this instance of atom;
+* `Alt-F2`: invert colors of active pdf-viewer;
 * `F5`: invoke `pdf-viewer:reload-all`;
 * `RightClick`: use synctex, if available;
 
@@ -55,6 +56,8 @@ The package supports additional options when opening. With them you can open on 
 This package supports SyncTeX `.tex` and `.pdf` in both directions. From a text file `.tex` to `.pdf` use the command `pdf-viewer:synctex` from command-pallette, while from `.pdf` to `.tex` you need to mouse right-click.
 
 For PDF files created by TeX using the `--synctex=1` option, a click on the PDF will take you to the corresponding source code. If the synctex command (part of modern TeX distributions) is in your PATH, this will work out of the box, otherwise you can configure the path to the synctex binary in the settings.
+
+The viewer can remember the page before refresh and set it initialy after refresh.
 
 ![sofi-key](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
 

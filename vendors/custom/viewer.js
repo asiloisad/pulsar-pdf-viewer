@@ -11,7 +11,9 @@ window.onload = () => {
 }
 
 window.addEventListener('keydown', (event) => {
-  if (event.keyCode===112 || event.keyCode===113 || event.keyCode===116) {
+  if (event.keyCode===113 && event.altKey) {
+    return toggleInvertMode()
+  } else if (event.keyCode===112 || event.keyCode===113 || event.keyCode===116) {
     return parent.postMessage({type:'keydown', keyCode:event.keyCode})
   }
 })
@@ -81,4 +83,11 @@ function scrollToPosition(data) {
     top: height + y - clientHeight * percentDown,
     left: x - clientWidth * percentAcross,
   });
+}
+
+let stateInvertMode = false
+function toggleInvertMode() {
+  stateInvertMode = !stateInvertMode
+  css = stateInvertMode ? '.page, .thumbnailImage {filter: invert(100%);}' : '.page, .thumbnailImage {filter: invert(0%);}'
+  document.getElementById('viewer-less').innerText = css
 }
