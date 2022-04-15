@@ -5,7 +5,7 @@ console.warn  = () => {}
 
 window.onload = () => {
   PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
-  PDFViewerApplicationOptions.set("defaultZoomValue", 'page-width');
+  PDFViewerApplicationOptions.set("defaultZoomValue", 'auto');
   PDFViewerApplicationOptions.set("enableScripting", false);
   PDFViewerApplicationOptions.set("externalLinkTarget", 4);
   PDFViewerApplicationOptions.set("isEvalSupported", false);
