@@ -65,15 +65,19 @@ window.addEventListener("message", (message) => {
   }
 })
 
-let lastParams = { page:1 }
+let lastParams = { page:1, zoom:'auto' }
 
 function refreshContents(data) {
   if (window.frameElement && window.frameElement.style.display==="none") {
     return
   } else if (PDFViewerApplication.pagesCount>1) {
-    lastParams.page  = PDFViewerApplication.page
+    lastParams.page = PDFViewerApplication.page
+    lastParams.zoom = PDFViewerApplication.pdfViewer.currentScaleValue
+    if (/^\d+(?:\.\d+)?$/.test(lastParams.zoom)) {
+      lastParams.zoom = parseFloat(lastParams.zoom)*100
+    }
   }
-  PDFViewerApplication.initialBookmark = `page=${lastParams.page}`;
+  PDFViewerApplication.initialBookmark = `page=${lastParams.page}&zoom=${lastParams.zoom}`;
   PDFViewerApplication.open(data.filePath)
 }
 
