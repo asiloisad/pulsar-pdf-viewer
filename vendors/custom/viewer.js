@@ -11,10 +11,14 @@ window.onload = () => {
 }
 
 window.addEventListener('keydown', (event) => {
-  if (event.keyCode===113 && event.altKey) {
+  if (event.keyCode===119) {
     return toggleInvertMode()
-  } else if (event.keyCode===112 || event.keyCode===113 || event.keyCode===116) {
-    return parent.postMessage({type:'keydown', keyCode:event.keyCode})
+  } else if (event.ctrlKey && event.keyCode===116) {
+    return parent.postMessage({type:'keydown', action:'toggle-refreshing'})
+  } else if (event.keyCode===116) {
+    return refreshContents({filePath:PDFViewerApplication.url})
+  } else if (event.keyCode===112) {
+    return parent.postMessage({type:'keydown', action:'command-palette'})
   }
 })
 
@@ -56,6 +60,8 @@ window.addEventListener("message", (message) => {
     return refreshContents(message.data);
   } else if (message.data.type==='setposition') {
     return scrollToPosition(message.data);
+  } else if (message.data.type==='invert') {
+    return toggleInvertMode(message.data)
   }
 })
 
@@ -85,9 +91,10 @@ function scrollToPosition(data) {
   });
 }
 
-let stateInvertMode = false
-function toggleInvertMode() {
-  stateInvertMode = !stateInvertMode
+let stateInvertMode
+
+function toggleInvertMode(data) {
+  stateInvertMode = data ? data.initial : !stateInvertMode
   css = stateInvertMode ? '.page, .thumbnailImage {filter: invert(100%);}' : '.page, .thumbnailImage {filter: invert(0%);}'
   document.getElementById('viewer-less').innerText = css
 }

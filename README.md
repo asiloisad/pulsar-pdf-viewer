@@ -4,11 +4,11 @@
 
 PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library including its viewer application, adapted for the Atom environment.
 
-PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs.
+PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consist of path to file and optional ![parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
 
 ## Style
 
-The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. This can be useful in many cases. To invert the document colours change the options in the package settings, use the `pdf-viewer.invertMode` from command-pallette or press the `F2` if the PDf viewer is active.
+The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. To invert the document colours change the options in the package settings, use the `pdf-viewer:invert-mode` from command-palette or press the `F8` to change it in active file.
 
 ![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
@@ -19,7 +19,7 @@ The keyboard shortcuts inside the PDF.js viewer have remained unchanged. It is n
 * The `Home`, `End`, `PageUp`, `PageDown` and all arrow keys can be used to navigate the document;
 * Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only) or `LeftClick` (presentation mode only);
 * Previous page: `P`, `K`, `Shift` + `Space` (presentation mode only), `Shift` + `Enter` (presentation mode only) or `Shift` + `LeftClick` (presentation mode only);
-* User interface buttons or `Ctrl` + mouse wheel can be used to change the zooming level;
+* User interface buttons or `Ctrl` + `MouseWheel` can be used to change the zooming level;
 * Zoom in: `Ctrl` + `+`, `Ctrl` + `=`;
 * Zoom out: `Ctrl` + `-`;
 * Restore normal zoom: `Ctrl` + `0`;
@@ -32,8 +32,8 @@ The keyboard shortcuts inside the PDF.js viewer have remained unchanged. It is n
 * Find text in the document: `Ctrl` + `f`;
 * Find next occurrence of text in the document: `Ctrl` + `G`;
 * Find previous occurrence of text in the document: Shift + `Ctrl` + `G`;
+* Print the document: unset;
 * Download the document: `Ctrl` + `S`;
-* Print the document: `Ctrl` + `P`;
 * Open a file: `Ctrl` + `O`;
 * Use `F4` to toggle the visibility of the sidebar;
 
@@ -41,11 +41,11 @@ After showing the sidebar, click on the "Show document outline" button (Show doc
 
 Additional keyboard shortcuts has been introduced:
 
-* `F1`: invoke `command-palette:toggle`;
-* `F2`: invoke `pdf-viewer:invert-colors`; invert colors for all pdf-viewers in this instance of atom;
-* `Alt-F2`: invert colors of active pdf-viewer;
-* `F5`: invoke `pdf-viewer:reload-all`;
-* `RightClick`: use synctex, if available;
+* Open command-palette: `Ctrl` + `Shift` + `P`, `F1`;
+* Refresh content for current viewer: `F5`;
+* Auto-refreshing toggle for current viewer: `Ctrl` + `F5`
+* Invert colors for current viewer; `F8`:
+* Use SyncTeX and go `.tex`. file, if possible: `RightClick`;
 
 ## URI options
 
@@ -53,7 +53,7 @@ The package supports additional options when opening. With them you can open on 
 
 ## LaTeX
 
-This package supports SyncTeX `.tex` and `.pdf` in both directions. From a text file `.tex` to `.pdf` use the command `pdf-viewer:synctex` from command-pallette, while from `.pdf` to `.tex` you need to mouse right-click.
+This package supports SyncTeX `.tex` and `.pdf` in both directions. From a text file `.tex` to `.pdf` use the command `pdf-viewer:synctex` from command-palette, while from `.pdf` to `.tex` you need to mouse `RightClick`.
 
 For PDF files created by TeX using the `--synctex=1` option, a click on the PDF will take you to the corresponding source code. If the synctex command (part of modern TeX distributions) is in your PATH, this will work out of the box, otherwise you can configure the path to the synctex binary in the settings.
 

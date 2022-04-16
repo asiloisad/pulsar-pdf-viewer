@@ -20,8 +20,8 @@
  * Javascript code in this page
  */
 
- // supress all output from pdfjs
- console.log = console.error = console.warn = () => {}
+// supress all output from pdfjs
+console.log = console.error = console.warn = () => {}
 
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
