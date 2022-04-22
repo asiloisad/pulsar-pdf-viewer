@@ -22,6 +22,10 @@ window.addEventListener('keydown', (event) => {
   }
 })
 
+window.addEventListener('click', () => {
+  parent.postMessage({type:'click'})
+})
+
 window.addEventListener('contextmenu', (event) => {
   const page = event.target.closest('div.page')
   if (!page) { return }
