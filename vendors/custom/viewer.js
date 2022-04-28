@@ -18,7 +18,9 @@ window.addEventListener('keydown', (event) => {
   } else if (event.keyCode===116) {
     return refreshContents({filePath:PDFViewerApplication.url})
   } else if (event.keyCode===112) {
-    return parent.postMessage({type:'keydown', action:'command-palette'})
+    return parent.postMessage({type:'keydown', action:'command-palette:toggle'})
+  } else if (event.altKey && event.keyCode===78) {
+    return parent.postMessage({type:'keydown', action:'navigation-panel:toggle'})
   }
 })
 
