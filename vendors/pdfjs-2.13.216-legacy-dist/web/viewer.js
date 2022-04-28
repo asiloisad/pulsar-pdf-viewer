@@ -1807,7 +1807,7 @@ var PDFViewerApplication = {
         if (pdfDocument !== _this12.pdfDocument) {
           return;
         }
-
+        parent.postMessage({type:'pdfjsOutline', outline:outline}) // FIX
         _this12.pdfOutlineViewer.render({
           outline: outline,
           pdfDocument: pdfDocument

@@ -64,6 +64,8 @@ window.addEventListener("message", (message) => {
     return refreshContents(message.data);
   } else if (message.data.type==='setposition') {
     return scrollToPosition(message.data);
+  } else if (message.data.type==='setdestination') {
+    return scrollToDestination(message.data);
   } else if (message.data.type==='invert') {
     return toggleInvertMode(message.data)
   }
@@ -97,6 +99,10 @@ function scrollToPosition(data) {
     top: height + y - clientHeight * percentDown,
     left: x - clientWidth * percentAcross,
   });
+}
+
+function scrollToDestination(data) {
+  PDFViewerApplication.pdfLinkService.goToDestination(data.dest)
 }
 
 let stateInvertMode

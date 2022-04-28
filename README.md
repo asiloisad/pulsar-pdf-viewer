@@ -47,6 +47,10 @@ Additional keyboard shortcuts has been introduced:
 * Invert colors for current viewer; `F8`:
 * Use SyncTeX and go `.tex`. file, if possible: `RightClick`;
 
+## Document outline
+
+The viewer support the [navigation-panel](https://atom.io/packages/navigation-panel). You can search through document by all-in outline tree instead of PDFjs outline.
+
 ## URI options
 
 The package supports additional options when opening. With them you can open on a specified page, set the initial zoom, open the file on a named destination or select a sidebar state. For more information see [pdf.js viewer options](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
