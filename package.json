@@ -2,7 +2,7 @@
   "name": "pdf-viewer",
   "description": "PDF viewer based on PDF.js",
   "main": "./lib/main",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "deserializers": {
     "pdf-viewer": "deserialize"
   },
