@@ -4,7 +4,15 @@
 
 PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library including its viewer application, adapted for the Atom environment.
 
-PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consist of path to file and optional ![parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(URI)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consist of path to file and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+
+## Installation
+
+After the announcement of Atoms sunset, the official [Atom packages store](https://atom.io/packages) isn't respond properly, so latest version of this package cannot be downloaded there. To get latest version run the shell command
+
+    apm install bacadra/atom-pdf-viewer
+
+and obtain the package directly from Github repository. Please note that package will occur in `Settings/Packages/Git Packages` instead of `Community Packages`.
 
 ## Style
 
@@ -18,38 +26,38 @@ The keyboard shortcuts inside the PDF.js viewer have remained unchanged. It is n
 
 * The `Home`, `End`, `PageUp`, `PageDown` and all arrow keys can be used to navigate the document;
 * Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only) or `LeftClick` (presentation mode only);
-* Previous page: `P`, `K`, `Shift` + `Space` (presentation mode only), `Shift` + `Enter` (presentation mode only) or `Shift` + `LeftClick` (presentation mode only);
-* User interface buttons or `Ctrl` + `MouseWheel` can be used to change the zooming level;
-* Zoom in: `Ctrl` + `+`, `Ctrl` + `=`;
-* Zoom out: `Ctrl` + `-`;
-* Restore normal zoom: `Ctrl` + `0`;
+* Previous page: `P`, `K`, `Shift-Space` (presentation mode only), `Shift-Enter` (presentation mode only) or `Shift-LeftClick` (presentation mode only);
+* User interface buttons or `Ctrl-MouseWheel` can be used to change the zooming level;
+* Zoom in: `Ctrl-+`, `Ctrl-=`;
+* Zoom out: `Ctrl--`;
+* Restore normal zoom: `Ctrl-0`;
 * Rotate the document clockwise: `r`;
-* Rotate the document counterclockwise: `Shift` + `R`;
-* Activate presentation mode: `Ctrl` + `Alt` + `P`;
+* Rotate the document counterclockwise: `Shift-R`;
+* Activate presentation mode: `Ctrl-Alt-P`;
 * Enable the hand tool: `h`;
 * Enable the text selection tool: `s`;
-* Move focus to the 'go to page' box: `Ctrl` + `Alt` + `G`;
-* Find text in the document: `Ctrl` + `f`;
-* Find next occurrence of text in the document: `Ctrl` + `G`;
-* Find previous occurrence of text in the document: Shift + `Ctrl` + `G`;
+* Move focus to the 'go to page' box: `Ctrl-Alt-G`;
+* Find text in the document: `Ctrl-F`;
+* Find next occurrence of text in the document: `Ctrl-G`;
+* Find previous occurrence of text in the document: Shift + `Ctrl-G`;
 * Print the document: unset;
-* Download the document: `Ctrl` + `S`;
-* Open a file: `Ctrl` + `O`;
+* Download the document: `Ctrl-S`;
+* Open a file: `Ctrl-O`;
 * Use `F4` to toggle the visibility of the sidebar;
 
 After showing the sidebar, click on the "Show document outline" button (Show document outline) to show the document outline (if the PDF file has one). Nested outline items can be expanded/collapsed by clicking on the triangles at the left of an item. To expand/collapse all items under the selected item, press `Shift` while clicking on the triangle. Double-click on the "Show document outline" button (Show document outline) to expand/collapse all outline items.
 
 Additional keyboard shortcuts has been introduced:
 
-* Open command-palette: `Ctrl` + `Shift` + `P`, `F1`;
+* Open command-palette: `Ctrl-Shift-P`, `F1`;
 * Refresh content for current viewer: `F5`;
-* Auto-refreshing toggle for current viewer: `Ctrl` + `F5`
+* Auto-refreshing toggle for current viewer: `Ctrl-F5`
 * Invert colors for current viewer; `F8`:
 * Use SyncTeX and go `.tex`. file, if possible: `RightClick`;
 
 ## Document outline
 
-The viewer support the [navigation-panel](https://atom.io/packages/navigation-panel). You can search through document by all-in outline tree instead of PDFjs outline.
+The viewer support the [navigation-panel](https://github.com/bacadra/atom-navigation-panel). You can search through document by all-in outline tree instead of PDFjs outline.
 
 ## URI options
 
@@ -70,3 +78,23 @@ The viewer can remember the page before refresh and set it initialy after refres
 This package is adapted to support `sofistik-tools` for help functions using the search keywords at current scope. For more information see the package [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools).
 
 ![sofi-key](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/sofi-key.png?raw=true)
+
+# Contributing
+
+If you have ideas on how to improve the package, see bugs or want to support new features, feel free to share them via GitHub.
+
+See my other packages dedicated to Atom Editor:
+
+* [autocomplete-sofistik](https://github.com/bacadra/atom-autocomplete-sofistik)
+* [bib-finder](https://github.com/bacadra/atom-bib-finder)
+* [hydrogen-run](https://github.com/bacadra/atom-hydrogen-run)
+* [image-paste](https://github.com/bacadra/atom-image-paste)
+* [language-sofistik](https://github.com/bacadra/atom-language-sofistik)
+* [navigation-panel](https://github.com/bacadra/atom-navigation-panel)
+* [open-external](https://github.com/bacadra/atom-open-external)
+* [pdf-viewer](https://github.com/bacadra/atom-pdf-viewer)
+* [project-files](https://github.com/bacadra/atom-project-files)
+* [regex-aligner](https://github.com/bacadra/atom-regex-aligner)
+* [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools)
+* [super-select](https://github.com/bacadra/atom-super-select)
+* [word-map](https://github.com/bacadra/atom-word-map)
