@@ -21,6 +21,14 @@ window.addEventListener('keydown', (event) => {
     return parent.postMessage({type:'keydown', action:'command-palette:toggle'})
   } else if (event.altKey && event.keyCode===78) {
     return parent.postMessage({type:'keydown', action:'navigation-panel:toggle'})
+  } else if (event.altKey && event.keyCode===123) {
+    return parent.postMessage({type:'keydown', action:'open-external:open-external'})
+  } else if (event.ctrlKey && event.keyCode===123) {
+    return parent.postMessage({type:'keydown', action:'open-external:show-in-folder'})
+  } else if (event.altKey && event.keyCode===121) {
+    return parent.postMessage({type:'keydown', action:'project-files:recent-toggle'})
+  } else if (event.keyCode===121) {
+    return parent.postMessage({type:'keydown', action:'project-files:projects-toggle'})
   }
 })
 
