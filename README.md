@@ -1,5 +1,10 @@
 # pdf-viewer
 
+![Tag](https://img.shields.io/github/v/tag/bacadra/atom-pdf-viewer?style=for-the-badge)
+![LastCommit](https://img.shields.io/github/last-commit/bacadra/atom-pdf-viewer?style=for-the-badge)
+![RepoSize](https://img.shields.io/github/repo-size/bacadra/atom-pdf-viewer?style=for-the-badge)
+![Licence](https://img.shields.io/github/license/bacadra/atom-pdf-viewer?style=for-the-badge)
+
 ![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
 
 PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library including its viewer application, adapted for the Atom environment.

@@ -17,5 +17,5 @@
   "homepage": "https://github.com/bacadra/atom-pdf-viewer#readme",
   "repository": "https://github.com/bacadra/atom-pdf-viewer",
   "bugs": "https://github.com/bacadra/atom-pdf-viewer/issues",
-  "license": "GPL-3.0-or-later"
+  "license": "MIT"
 }
