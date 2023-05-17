@@ -78,6 +78,8 @@ window.addEventListener("message", (message) => {
     return scrollToDestination(message.data);
   } else if (message.data.type==='invert') {
     return toggleInvertMode(message.data)
+  } else if (message.data.type==='currentdest') {
+    return spawnCurrentDest(message.data)
   }
 })
 
@@ -121,4 +123,8 @@ function toggleInvertMode(data) {
   stateInvertMode = data ? data.initial : !stateInvertMode
   css = stateInvertMode ? '.page, .thumbnailImage {filter: invert(100%);}' : '.page, .thumbnailImage {filter: invert(0%);}'
   document.getElementById('viewer-less').innerText = css
+}
+
+function spawnCurrentDest() {
+  PDFViewerApplication.pdfOutlineViewer._currentOutlineItem()
 }

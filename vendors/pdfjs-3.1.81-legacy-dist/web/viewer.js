@@ -7210,14 +7210,19 @@ class PDFOutlineViewer extends _base_tree_viewer.BaseTreeViewer {
       return;
     }
     this._updateCurrentTreeItem(null);
-    if (this._sidebarView !== _ui_utils.SidebarView.OUTLINE) {
-      return;
-    }
+    // ===== FIX ===== //
+    // if (this._sidebarView !== _ui_utils.SidebarView.OUTLINE) {
+    //   return;
+    // }
+    // =============== //
     for (let i = this._currentPageNumber; i > 0; i--) {
       const destHash = pageNumberToDestHash.get(i);
       if (!destHash) {
         continue;
       }
+      // ===== FIX ===== //
+      parent.postMessage({type:'currentOutlineItem', destHash:destHash})
+      // =============== //
       const linkElement = this.container.querySelector(`a[href="${destHash}"]`);
       if (!linkElement) {
         continue;
