@@ -7200,7 +7200,10 @@ class PDFOutlineViewer extends _base_tree_viewer.BaseTreeViewer {
   }
   async _currentOutlineItem() {
     if (!this._isPagesLoaded) {
-      throw new Error("_currentOutlineItem: All pages have not been loaded.");
+      // ===== FIX ===== //
+      // throw new Error("_currentOutlineItem: All pages have not been loaded.");
+      // =============== //
+      return;
     }
     if (!this._outline || !this._pdfDocument) {
       return;
@@ -7222,6 +7225,9 @@ class PDFOutlineViewer extends _base_tree_viewer.BaseTreeViewer {
       }
       // ===== FIX ===== //
       parent.postMessage({type:'currentOutlineItem', destHash:destHash})
+      if (this._sidebarView !== _ui_utils.SidebarView.OUTLINE) {
+        return;
+      }
       // =============== //
       const linkElement = this.container.querySelector(`a[href="${destHash}"]`);
       if (!linkElement) {
