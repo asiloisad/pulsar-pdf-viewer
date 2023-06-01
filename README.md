@@ -25,7 +25,7 @@ PDF files can be opened from the Atom user interface, e.g. from the project tree
 
 ### Atom Text Editor
 
-The official Atom packages store has been disabled. To get latest version run the shell command
+The official Atom packages store has been [disabled](https://github.blog/2022-06-08-sunsetting-atom/). To get latest version run the shell command
 
     apm install bacadra/atom-pdf-viewer
 
@@ -35,7 +35,7 @@ and obtain the package directly from Github repository.
 
 The package has compability with [Pulsar](https://pulsar-edit.dev/) and can be install
 
-    pulsar -p install bacadra/atom-pdf-viewer
+    ppm install bacadra/atom-pdf-viewer
 
 or directly [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) from Pulsar package store.
 
@@ -43,7 +43,7 @@ or directly [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) from P
 
 The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. To invert the document colours change the options in the package settings, use the `pdf-viewer:invert-mode` from command-palette or press the `F8` to change it in active file.
 
-![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
+![dark-mode](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
 ## Keyboard shortcuts
 
@@ -96,7 +96,7 @@ For PDF files created by TeX using the `--synctex=1` option, a click on the PDF 
 
 The viewer can remember the page before refresh and set it initialy after refresh.
 
-![sofi-key](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
+![latex-synctex](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
 
 ## SOFiSTiK
 
@@ -114,8 +114,10 @@ See my other packages for Atom & Pulsar Text Editors:
 <a href="https://github.com/bacadra/atom-bib-finder"><img src="https://img.shields.io/github/v/tag/bacadra/atom-bib-finder?style=for-the-badge&label=bib-finder&color=blue" alt="bib-finder">
 <a href="https://github.com/bacadra/atom-hydrogen-run"><img src="https://img.shields.io/github/v/tag/bacadra/atom-hydrogen-run?style=for-the-badge&label=hydrogen-run&color=blue" alt="hydrogen-run">
 <a href="https://github.com/bacadra/atom-image-paste"><img src="https://img.shields.io/github/v/tag/bacadra/atom-image-paste?style=for-the-badge&label=image-paste&color=blue" alt="image-paste">
+<a href="https://github.com/bacadra/atom-language-latex"><img src="https://img.shields.io/github/v/tag/bacadra/atom-language-latex?style=for-the-badge&label=language-latex&color=blue" alt="language-latex">
 <a href="https://github.com/bacadra/atom-language-sofistik"><img src="https://img.shields.io/github/v/tag/bacadra/atom-language-sofistik?style=for-the-badge&label=language-sofistik&color=blue" alt="language-sofistik">
 <a href="https://github.com/bacadra/atom-linter-ruff"><img src="https://img.shields.io/github/v/tag/bacadra/atom-linter-ruff?style=for-the-badge&label=linter-ruff&color=blue" alt="linter-ruff">
+<a href="https://github.com/bacadra/atom-linter-sofistik"><img src="https://img.shields.io/github/v/tag/bacadra/atom-linter-sofistik?style=for-the-badge&label=linter-sofistik&color=blue" alt="linter-sofistik">
 <a href="https://github.com/bacadra/atom-navigation-panel"><img src="https://img.shields.io/github/v/tag/bacadra/atom-navigation-panel?style=for-the-badge&label=navigation-panel&color=blue" alt="navigation-panel">
 <a href="https://github.com/bacadra/atom-open-external"><img src="https://img.shields.io/github/v/tag/bacadra/atom-open-external?style=for-the-badge&label=open-external&color=blue" alt="open-external">
 <a href="https://github.com/bacadra/atom-pdf-viewer"><img src="https://img.shields.io/github/v/tag/bacadra/atom-pdf-viewer?style=for-the-badge&label=pdf-viewer&color=blue" alt="pdf-viewer">
