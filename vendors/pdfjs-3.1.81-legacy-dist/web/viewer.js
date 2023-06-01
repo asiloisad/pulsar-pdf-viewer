@@ -2202,6 +2202,14 @@ const PDFViewerApplication = {
           return;
         }
         // ===== FIX ===== //
+        let pdfLinkService = this.pdfLinkService
+        function setDH(array) {
+          array.forEach((item) => {
+            item.destHash = pdfLinkService.getDestinationHash(item.dest)
+            setDH(item.items)
+          })
+        }
+        setDH(outline)
         parent.postMessage({type:'pdfjsOutline', outline:outline})
         // =============== //
         this.pdfOutlineViewer.render({

@@ -21,7 +21,7 @@
  */
 
 // ===== FIX ===== //
-console.log = console.error = console.warn = () => {}
+// console.log = console.error = console.warn = () => {}
 // =============== //
 
 (function webpackUniversalModuleDefinition(root, factory) {
