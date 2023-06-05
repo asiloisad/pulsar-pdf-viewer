@@ -19,7 +19,7 @@
 
 PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library including its viewer application, adapted for the Atom environment.
 
-PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(URI)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consist of path to file and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consist of filepath and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
 
 ## Installation
 
@@ -38,12 +38,6 @@ The package has compability with [Pulsar](https://pulsar-edit.dev/) and can be i
     ppm install bacadra/atom-pdf-viewer
 
 or directly [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) from Pulsar package store.
-
-## Style
-
-The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. To invert the document colours change the options in the package settings, use the `pdf-viewer:invert-mode` from command-palette or press the `F8` to change it in active file.
-
-![dark-mode](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
 ## Keyboard shortcuts
 
@@ -80,6 +74,12 @@ Additional keyboard shortcuts has been introduced:
 * Invert colors for current viewer; `F8`:
 * Use SyncTeX and go `.tex`. file, if possible: `RightClick`;
 
+## Style
+
+The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. To invert the document colours change the options in the package settings, use the `pdf-viewer:invert-mode` from command-palette or press the `F8` to change it in active file.
+
+![dark-mode](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
+
 ## Document outline
 
 The viewer support the [navigation-panel](https://github.com/bacadra/atom-navigation-panel). You can search through document by all-in outline tree instead of PDFjs outline.
@@ -102,9 +102,7 @@ The viewer can remember the page before refresh and set it initialy after refres
 
 This package is adapted to support `sofistik-tools` for help functions using the search keywords at current scope. For more information see the package [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools).
 
-![sofi-key](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/sofi-key.png?raw=true)
-
-# Contributing
+# Contributing [🍺](https://www.buymeacoffee.com/asiloisad)
 
 If you have ideas on how to improve the package, see bugs or want to support new features - feel free to share it via GitHub.
 
