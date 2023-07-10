@@ -17,9 +17,9 @@
 
 ![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
 
-PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library including its viewer application, adapted for the Atom environment.
+The pdf-viewer package is a PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library, including its viewer application, adapted for the Atom environment.
 
-PDF files can be opened from the Atom user interface, e.g. from the project tree view, or programmatically through `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consist of filepath and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+PDF files can be opened from the Atom user interface, such as from the project tree view, or programmatically using `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consists of the filepath and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
 
 ## Installation
 
@@ -45,66 +45,66 @@ Alternatively, you can directly install [pdf-viewer](https://web.pulsar-edit.dev
 
 ## Keyboard shortcuts
 
-The keyboard shortcuts inside the PDF.js viewer have remained unchanged. It is not possible to change these shortcuts from within Atom. For more information, see [default keymap](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts):
+The keyboard shortcuts within the PDF.js viewer remain unchanged and cannot be modified from within Atom. For more information, refer to the [default keymap](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts):
 
-* The `Home`, `End`, `PageUp`, `PageDown` and all arrow keys can be used to navigate the document;
-* Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only) or `LeftClick` (presentation mode only);
-* Previous page: `P`, `K`, `Shift-Space` (presentation mode only), `Shift-Enter` (presentation mode only) or `Shift-LeftClick` (presentation mode only);
-* User interface buttons or `Ctrl-MouseWheel` can be used to change the zooming level;
-* Zoom in: `Ctrl-+`, `Ctrl-=`;
-* Zoom out: `Ctrl--`;
-* Restore normal zoom: `Ctrl-0`;
-* Rotate the document clockwise: `r`;
-* Rotate the document counterclockwise: `Shift-R`;
-* Activate presentation mode: `Ctrl-Alt-P`;
-* Enable the hand tool: `h`;
-* Enable the text selection tool: `s`;
-* Move focus to the 'go to page' box: `Ctrl-Alt-G`;
-* Find text in the document: `Ctrl-F`;
-* Find next occurrence of text in the document: `Ctrl-G`;
-* Find previous occurrence of text in the document: Shift + `Ctrl-G`;
-* Print the document: unset;
-* Download the document: `Ctrl-S`;
-* Open a file: `Ctrl-O`;
-* Use `F4` to toggle the visibility of the sidebar;
+- The `Home`, `End`, `PageUp`, `PageDown`, and arrow keys can be used to navigate the document.
+- Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only), or `LeftClick` (presentation mode only).
+- Previous page: `P`, `K`, `Shift-Space` (presentation mode only), `Shift-Enter` (presentation mode only), or `Shift-LeftClick` (presentation mode only).
+- User interface buttons or `Ctrl-MouseWheel` can be used to change the zoom level.
+- Zoom in: `Ctrl-+`, `Ctrl-=`.
+- Zoom out: `Ctrl--`.
+- Restore normal zoom: `Ctrl-0`.
+- Rotate the document clockwise: `r`.
+- Rotate the document counterclockwise: `Shift-R`.
+- Activate presentation mode: `Ctrl-Alt-P`.
+- Enable the hand tool: `h`.
+- Enable the text selection tool: `s`.
+- Move focus to the 'go to page' box: `Ctrl-Alt-G`.
+- Find text in the document: `Ctrl-F`.
+- Find the next occurrence of text in the document: `Ctrl-G`.
+- Find the previous occurrence of text in the document: Shift + `Ctrl-G`.
+- Print the document: unset.
+- Download the document: `Ctrl-S`.
+- Open a file: `Ctrl-O`.
+- Use `F4` to toggle the visibility of the sidebar.
 
-After showing the sidebar, click on the "Show document outline" button (Show document outline) to show the document outline (if the PDF file has one). Nested outline items can be expanded/collapsed by clicking on the triangles at the left of an item. To expand/collapse all items under the selected item, press `Shift` while clicking on the triangle. Double-click on the "Show document outline" button (Show document outline) to expand/collapse all outline items.
+After showing the sidebar, click on the "Show document outline" button to display the document outline (if the PDF file has one). Nested outline items can be expanded/collapsed by clicking on the triangles to the left of an item. To expand/collapse all items under the selected item, press `Shift` while clicking on the triangle. Double-click on the "Show document outline" button to expand/collapse all outline items.
 
-Additional keyboard shortcuts has been introduced:
+Additional keyboard shortcuts have been introduced:
 
-* Open command-palette: `Ctrl-Shift-P`, `F1`;
-* Refresh content for current viewer: `F5`;
-* Auto-refreshing toggle for current viewer: `Ctrl-F5`
-* Invert colors for current viewer; `F8`:
-* Use SyncTeX and go `.tex`. file, if possible: `RightClick`;
+- Open command palette: `Ctrl-Shift-P`, `F1`.
+- Refresh content for the current viewer: `F5`.
+- Toggle auto-refresh for the current viewer: `Ctrl-F5`.
+- Invert colors for the current viewer: `F8`.
+- Use SyncTeX and go to the corresponding `.tex` file (if available): Right-click.
 
 ## Style
 
-The style of the documents has been adapted to the theme in Atom. As the style changes, you may notice the menu colours change. An additional option has been introduced to invert the colours of the document itself. To invert the document colours change the options in the package settings, use the `pdf-viewer:invert-mode` from command-palette or press the `F8` to change it in active file.
+The style of the documents has been adapted to match the theme in Atom. As the style changes, you may notice the menu colors change. An additional option has been introduced to invert the colors of the document itself. To invert the document colors, change the options in the package settings, use `pdf-viewer:invert-mode` from the command palette, or press `F8` while viewing an active file.
 
 ![dark-mode](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
 ## Document outline
 
-The viewer support the [navigation-panel](https://github.com/bacadra/atom-navigation-panel). You can search through document by all-in outline tree instead of PDFjs outline.
+The viewer supports the [navigation-panel](https://github.com/bacadra/atom-navigation-panel) package. You can search through the document using the all-in outline tree instead of the PDFjs outline.
 
 ## URI options
 
-The package supports additional options when opening. With them you can open on a specified page, set the initial zoom, open the file on a named destination or select a sidebar state. For more information see [pdf.js viewer options](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+The package supports additional options when opening a PDF. These options allow you to open a PDF on a specific page, set the initial zoom level, open the file to a named destination, or select a sidebar state. For more information, see [pdf.js viewer options](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
 
 ## LaTeX
 
-This package supports SyncTeX `.tex` and `.pdf` in both directions. From a text file `.tex` to `.pdf` use the command `pdf-viewer:synctex` from command-palette, while from `.pdf` to `.tex` you need to mouse `RightClick`.
+This package supports SyncTeX for `.tex` and `.pdf` files in both directions. To go from a `.tex` file to a `.pdf` file, use the `pdf-viewer:synctex` command from the command palette. To go from a `.pdf` file to a `.tex` file, right-click on the desired location in the PDF.
 
-For PDF files created by TeX using the `--synctex=1` option, a click on the PDF will take you to the corresponding source code. If the synctex command (part of modern TeX distributions) is in your PATH, this will work out of the box, otherwise you can configure the path to the synctex binary in the settings.
+For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF will take you to the corresponding source code. If the `synctex` command (part of modern TeX distributions) is in your PATH, this functionality will work out of the box. Otherwise, you can configure the path to the `synctex` binary in the package settings.
 
-The viewer can remember the page before refresh and set it initialy after refresh.
+The viewer can remember the page before a refresh and set it as the initial page after the refresh.
 
 ![latex-synctex](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
 
 ## SOFiSTiK
 
-This package is adapted to support `sofistik-tools` for help functions using the search keywords at current scope. For more information see the package [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools).
+This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools) package.
 
 # Contributing [🍺](https://www.buymeacoffee.com/asiloisad)
 
