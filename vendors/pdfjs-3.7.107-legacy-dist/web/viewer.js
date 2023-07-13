@@ -1005,6 +1005,7 @@ const PDFViewerApplication = {
           // ===== FIX ===== //
           let pdfLinkService = this.pdfLinkService
           function setDH(array) {
+            if (!array) { return }
             array.forEach((item) => {
               item.destHash = pdfLinkService.getDestinationHash(item.dest)
               setDH(item.items)
