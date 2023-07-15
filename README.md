@@ -77,6 +77,17 @@ Additional keyboard shortcuts have been introduced:
 - Toggle auto-refresh for the current viewer: `Ctrl-F5`.
 - Invert colors for the current viewer: `F8`.
 - Use SyncTeX and go to the corresponding `.tex` file (if available): Right-click.
+- Focus pane on left: `Alt-Left`
+- Focus pane above: `Alt-Up`
+- Focus pane on right: `Alt-Right`
+- Focus pane below: `Alt-Down`
+
+Some keymap of external packages have been implemented:
+- [[navigation-panel](https://github.com/bacadra/atom-navigation-panel)] Toggle panel: `Alt-N`
+- [[open-external](https://github.com/bacadra/atom-open-external)] Open external: `Alt-F12`
+- [[open-external](https://github.com/bacadra/atom-open-external)] Show in folder: `Ctrl-F12`
+- [[project-files](https://github.com/bacadra/atom-project-files)] Toggle recent list: `Alt-F10`
+- [[project-files](https://github.com/bacadra/atom-project-files)] Toggle project list: `F10`
 
 ## Style
 

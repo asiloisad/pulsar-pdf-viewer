@@ -29,6 +29,14 @@ window.addEventListener('keydown', (event) => {
     return parent.postMessage({type:'keydown', action:'project-files:recent-toggle'})
   } else if (event.keyCode===121) {
     return parent.postMessage({type:'keydown', action:'project-files:projects-toggle'})
+  } else if (event.altKey && event.keyCode===37) {
+    return parent.postMessage({type:'keydown', action:'window:focus-pane-on-left'})
+  } else if (event.altKey && event.keyCode===38) {
+    return parent.postMessage({type:'keydown', action:'window:focus-pane-above'})
+  } else if (event.altKey && event.keyCode===39) {
+    return parent.postMessage({type:'keydown', action:'window:focus-pane-on-right'})
+  } else if (event.altKey && event.keyCode===40) {
+    return parent.postMessage({type:'keydown', action:'window:focus-pane-below'})
   }
 })
 
