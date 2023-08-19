@@ -1,51 +1,35 @@
 # pdf-viewer
 
 <p align="center">
-  <a href="https://github.com/bacadra/atom-pdf-viewer/tags">
-  <img src="https://img.shields.io/github/v/tag/bacadra/atom-pdf-viewer?style=for-the-badge&label=Latest&color=blue" alt="Latest">
+  <a href="https://github.com/bacadra/pulsar-pdf-viewer/tags">
+  <img src="https://img.shields.io/github/v/tag/bacadra/pulsar-pdf-viewer?style=for-the-badge&label=Latest&color=blue" alt="Latest">
   </a>
-  <a href="https://github.com/bacadra/atom-pdf-viewer/issues">
-  <img src="https://img.shields.io/github/issues-raw/bacadra/atom-pdf-viewer?style=for-the-badge&color=blue" alt="OpenIssues">
+  <a href="https://github.com/bacadra/pulsar-pdf-viewer/issues">
+  <img src="https://img.shields.io/github/issues-raw/bacadra/pulsar-pdf-viewer?style=for-the-badge&color=blue" alt="OpenIssues">
   </a>
-  <a href="https://github.com/bacadra/atom-pdf-viewer/blob/master/package.json">
-  <img src="https://img.shields.io/github/languages/top/bacadra/atom-pdf-viewer?style=for-the-badge&color=blue" alt="Language">
+  <a href="https://github.com/bacadra/pulsar-pdf-viewer/blob/master/package.json">
+  <img src="https://img.shields.io/github/languages/top/bacadra/pulsar-pdf-viewer?style=for-the-badge&color=blue" alt="Language">
   </a>
-  <a href="https://github.com/bacadra/atom-pdf-viewer/blob/master/LICENSE">
-  <img src="https://img.shields.io/github/license/bacadra/atom-pdf-viewer?style=for-the-badge&color=blue" alt="Licence">
+  <a href="https://github.com/bacadra/pulsar-pdf-viewer/blob/master/LICENSE">
+  <img src="https://img.shields.io/github/license/bacadra/pulsar-pdf-viewer?style=for-the-badge&color=blue" alt="Licence">
   </a>
 </p>
 
-![title-pic](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
+![title-pic](https://github.com/bacadra/pulsar-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
 
-The pdf-viewer package is a PDF viewer for Atom. It is a wrapper around Mozilla's PDF.js library, including its viewer application, adapted for the Atom environment.
+The pdf-viewer package is a PDF viewer for Pulsar. It is a wrapper around Mozilla's PDF.js library, including its viewer application, adapted for the Pulsar environment.
 
-PDF files can be opened from the Atom user interface, such as from the project tree view, or programmatically using `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Atom runs. The `uri` consists of the filepath and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+PDF files can be opened from the Pulsar user interface, such as from the project tree view, or programmatically using `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Pulsar runs. The `uri` consists of the filepath and optional [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
 
 ## Installation
 
-### Atom Text Editor
+To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`.
 
-The official Atom packages store has been [disabled](https://github.blog/2022-06-08-sunsetting-atom/). To obtain the latest version, please run the following shell command:
-
-```shell
-apm install bacadra/atom-pdf-viewer
-```
-
-This will allow you to directly download the package from the GitHub repository.
-
-### Pulsar Text Editor
-
-The package is compatible with [Pulsar](https://pulsar-edit.dev/) and can be installed using the following command:
-
-```shell
-ppm install bacadra/atom-pdf-viewer
-```
-
-Alternatively, you can directly install [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) from the Pulsar package store.
+Alternatively, run `ppm install bacadra/pulsar-pdf-viewer` to install a package directly from Github repository.
 
 ## Keyboard shortcuts
 
-The keyboard shortcuts within the PDF.js viewer remain unchanged and cannot be modified from within Atom. For more information, refer to the [default keymap](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts):
+The keyboard shortcuts within the PDF.js viewer remain unchanged and cannot be modified from within Pulsar. For more information, refer to the [default keymap](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts):
 
 - The `Home`, `End`, `PageUp`, `PageDown`, and arrow keys can be used to navigate the document.
 - Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only), or `LeftClick` (presentation mode only).
@@ -83,21 +67,21 @@ Additional keyboard shortcuts have been introduced:
 - Focus pane below: `Alt-Down`
 
 Some keymap of external packages have been implemented:
-- [[navigation-panel](https://github.com/bacadra/atom-navigation-panel)] Toggle panel: `Alt-N`
-- [[open-external](https://github.com/bacadra/atom-open-external)] Open external: `Alt-F12`
-- [[open-external](https://github.com/bacadra/atom-open-external)] Show in folder: `Ctrl-F12`
-- [[project-files](https://github.com/bacadra/atom-project-files)] Toggle recent list: `Alt-F10`
-- [[project-files](https://github.com/bacadra/atom-project-files)] Toggle project list: `F10`
+- [[navigation-panel](https://github.com/bacadra/pulsar-navigation-panel)] Toggle panel: `Alt-N`
+- [[open-external](https://github.com/bacadra/pulsar-open-external)] Open external: `Alt-F12`
+- [[open-external](https://github.com/bacadra/pulsar-open-external)] Show in folder: `Ctrl-F12`
+- [[project-files](https://github.com/bacadra/pulsar-project-files)] Toggle recent list: `Alt-F10`
+- [[project-files](https://github.com/bacadra/pulsar-project-files)] Toggle project list: `F10`
 
 ## Style
 
-The style of the documents has been adapted to match the theme in Atom. As the style changes, you may notice the menu colors change. An additional option has been introduced to invert the colors of the document itself. To invert the document colors, change the options in the package settings, use `pdf-viewer:invert-mode` from the command palette, or press `F8` while viewing an active file.
+The style of the documents has been adapted to match the theme in Pulsar. As the style changes, you may notice the menu colors change. An additional option has been introduced to invert the colors of the document itself. To invert the document colors, change the options in the package settings, use `pdf-viewer:invert-mode` from the command palette, or press `F8` while viewing an active file.
 
-![dark-mode](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
+![dark-mode](https://github.com/bacadra/pulsar-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
 ## Document outline
 
-The viewer supports the [navigation-panel](https://github.com/bacadra/atom-navigation-panel) package. You can search through the document using the all-in outline tree instead of the PDFjs outline.
+The viewer supports the [navigation-panel](https://github.com/bacadra/pulsar-navigation-panel) package. You can search through the document using the all-in outline tree instead of the PDFjs outline.
 
 ## URI options
 
@@ -111,11 +95,11 @@ For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF
 
 The viewer can remember the page before a refresh and set it as the initial page after the refresh.
 
-![latex-synctex](https://github.com/bacadra/atom-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
+![latex-synctex](https://github.com/bacadra/pulsar-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
 
 ## SOFiSTiK
 
-This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/bacadra/atom-sofistik-tools) package.
+This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/bacadra/pulsar-sofistik-tools) package.
 
 # Contributing [🍺](https://www.buymeacoffee.com/asiloisad)
 
