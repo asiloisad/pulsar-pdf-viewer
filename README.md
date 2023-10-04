@@ -70,8 +70,9 @@ Some keymap of external packages have been implemented:
 - [[navigation-panel](https://github.com/bacadra/pulsar-navigation-panel)] Toggle panel: `Alt-N`
 - [[open-external](https://github.com/bacadra/pulsar-open-external)] Open external: `Alt-F12`
 - [[open-external](https://github.com/bacadra/pulsar-open-external)] Show in folder: `Ctrl-F12`
-- [[project-files](https://github.com/bacadra/pulsar-project-files)] Toggle recent list: `Alt-F10`
-- [[project-files](https://github.com/bacadra/pulsar-project-files)] Toggle project list: `F10`
+- [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle recent list: `Alt-F10`
+- [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle project list: `F10`
+- [[fuzzy-files](https://github.com/bacadra/pulsar-fuzzy-files)] Toggle file list: `Ctrl-P`
 
 ## Style
 
