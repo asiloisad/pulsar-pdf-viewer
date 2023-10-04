@@ -2,13 +2,13 @@
   "name": "pdf-viewer",
   "description": "PDF viewer based on PDF.js",
   "main": "./lib/main",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "deserializers": {
     "pdf-viewer": "deserialize"
   },
   "engines": {
     "atom": ">=1.100.0 <2.0.0"
-  },  
+  },
   "keywords": [
     "bacadra",
     "pdf",
