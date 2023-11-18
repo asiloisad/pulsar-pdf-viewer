@@ -25,54 +25,54 @@ PDF files can be opened from the Pulsar user interface, such as from the project
 
 To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`.
 
-Alternatively, run `ppm install bacadra/pulsar-pdf-viewer` to install a package directly from Github repository.
+Alternatively, you can run `ppm install bacadra/pulsar-pdf-viewer` to install a package directly from the Github repository.
 
 ## Keyboard shortcuts
 
 The keyboard shortcuts within the PDF.js viewer remain unchanged and cannot be modified from within Pulsar. For more information, refer to the [default keymap](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts):
 
-- The `Home`, `End`, `PageUp`, `PageDown`, and arrow keys can be used to navigate the document.
-- Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only), or `LeftClick` (presentation mode only).
-- Previous page: `P`, `K`, `Shift-Space` (presentation mode only), `Shift-Enter` (presentation mode only), or `Shift-LeftClick` (presentation mode only).
-- User interface buttons or `Ctrl-MouseWheel` can be used to change the zoom level.
-- Zoom in: `Ctrl-+`, `Ctrl-=`.
-- Zoom out: `Ctrl--`.
-- Restore normal zoom: `Ctrl-0`.
-- Rotate the document clockwise: `r`.
-- Rotate the document counterclockwise: `Shift-R`.
-- Activate presentation mode: `Ctrl-Alt-P`.
-- Enable the hand tool: `h`.
-- Enable the text selection tool: `s`.
-- Move focus to the 'go to page' box: `Ctrl-Alt-G`.
-- Find text in the document: `Ctrl-F`.
-- Find the next occurrence of text in the document: `Ctrl-G`.
-- Find the previous occurrence of text in the document: Shift + `Ctrl-G`.
-- Print the document: unset.
-- Download the document: `Ctrl-S`.
-- Open a file: `Ctrl-O`.
-- Use `F4` to toggle the visibility of the sidebar.
+* The `Home`, `End`, `PageUp`, `PageDown`, and arrow keys can be used to navigate the document.
+* Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only), or `LeftClick` (presentation mode only).
+* Previous page: `P`, `K`, `Shift-Space` (presentation mode only), `Shift-Enter` (presentation mode only), or `Shift-LeftClick` (presentation mode only).
+* User interface buttons or `Ctrl-MouseWheel` can be used to change the zoom level.
+* Zoom in: `Ctrl-+`, `Ctrl-=`.
+* Zoom out: `Ctrl--`.
+* Restore normal zoom: `Ctrl-0`.
+* Rotate the document clockwise: `r`.
+* Rotate the document counterclockwise: `Shift-R`.
+* Activate presentation mode: `Ctrl-Alt-P`.
+* Enable the hand tool: `h`.
+* Enable the text selection tool: `s`.
+* Move focus to the 'go to page' box: `Ctrl-Alt-G`.
+* Find text in the document: `Ctrl-F`.
+* Find the next occurrence of text in the document: `Ctrl-G`.
+* Find the previous occurrence of text in the document: Shift + `Ctrl-G`.
+* Print the document: unset.
+* Download the document: `Ctrl-S`.
+* Open a file: `Ctrl-O`.
+* Use `F4` to toggle the visibility of the sidebar.
 
 After showing the sidebar, click on the "Show document outline" button to display the document outline (if the PDF file has one). Nested outline items can be expanded/collapsed by clicking on the triangles to the left of an item. To expand/collapse all items under the selected item, press `Shift` while clicking on the triangle. Double-click on the "Show document outline" button to expand/collapse all outline items.
 
 Additional keyboard shortcuts have been introduced:
 
-- Open command palette: `Ctrl-Shift-P`, `F1`.
-- Refresh content for the current viewer: `F5`.
-- Toggle auto-refresh for the current viewer: `Ctrl-F5`.
-- Invert colors for the current viewer: `F8`.
-- Use SyncTeX and go to the corresponding `.tex` file (if available): Right-click.
-- Focus pane on left: `Alt-Left`
-- Focus pane above: `Alt-Up`
-- Focus pane on right: `Alt-Right`
-- Focus pane below: `Alt-Down`
+* Open command palette: `Ctrl-Shift-P`, `F1`.
+* Refresh content for the current viewer: `F5`.
+* Toggle auto-refresh for the current viewer: `Ctrl-F5`.
+* Invert colors for the current viewer: `F8`.
+* Use SyncTeX and go to the corresponding `.tex` file (if available): Right-click.
+* Focus pane on left: `Alt-Left`
+* Focus pane above: `Alt-Up`
+* Focus pane on right: `Alt-Right`
+* Focus pane below: `Alt-Down`
 
 Some keymap of external packages have been implemented:
-- [[navigation-panel](https://github.com/bacadra/pulsar-navigation-panel)] Toggle panel: `Alt-N`
-- [[open-external](https://github.com/bacadra/pulsar-open-external)] Open external: `Alt-F12`
-- [[open-external](https://github.com/bacadra/pulsar-open-external)] Show in folder: `Ctrl-F12`
-- [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle recent list: `Alt-F10`
-- [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle project list: `F10`
-- [[fuzzy-files](https://github.com/bacadra/pulsar-fuzzy-files)] Toggle file list: `Ctrl-P`
+* [[navigation-panel](https://github.com/bacadra/pulsar-navigation-panel)] Toggle panel: `Alt-N`
+* [[open-external](https://github.com/bacadra/pulsar-open-external)] Open external: `Alt-F12`
+* [[open-external](https://github.com/bacadra/pulsar-open-external)] Show in folder: `Ctrl-F12`
+* [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle recent list: `Alt-F10`
+* [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle project list: `F10`
+* [[fuzzy-files](https://github.com/bacadra/pulsar-fuzzy-files)] Toggle file list: `Ctrl-P`
 
 ## Style
 
