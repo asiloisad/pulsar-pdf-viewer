@@ -23,9 +23,7 @@ PDF files can be opened from the Pulsar user interface, such as from the project
 
 ## Installation
 
-To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`.
-
-Alternatively, you can run `ppm install bacadra/pulsar-pdf-viewer` to install a package directly from the Github repository.
+To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`. Alternatively, you can run `ppm install bacadra/pulsar-pdf-viewer` to install a package directly from the Github repository.
 
 ## Keyboard shortcuts
 
