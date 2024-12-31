@@ -104,7 +104,7 @@ function refreshContents(data) {
     }
   }
   PDFViewerApplication.initialBookmark = `page=${lastParams.page}&zoom=${lastParams.zoom}`;
-  PDFViewerApplication.open(data.filePath)
+  PDFViewerApplication.open({ url:data.filePath })
 }
 
 function scrollToPosition(data) {
