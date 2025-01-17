@@ -22,13 +22,13 @@ window.addEventListener('keydown', (event) => {
   } else if (event.altKey && event.keyCode===78) {
     return parent.postMessage({type:'keydown', action:'navigation-panel:toggle'})
   } else if (event.altKey && event.keyCode===123) {
-    return parent.postMessage({type:'keydown', action:'open-external:open-external'})
+    return parent.postMessage({type:'keydown', action:'open-external:open'})
   } else if (event.ctrlKey && event.keyCode===123) {
-    return parent.postMessage({type:'keydown', action:'open-external:show-in-folder'})
+    return parent.postMessage({type:'keydown', action:'open-external:show'})
   } else if (event.altKey && event.keyCode===121) {
-    return parent.postMessage({type:'keydown', action:'project-files:recent-toggle'})
+    return parent.postMessage({type:'keydown', action:'project-list:recent'})
   } else if (event.keyCode===121) {
-    return parent.postMessage({type:'keydown', action:'project-files:projects-toggle'})
+    return parent.postMessage({type:'keydown', action:'project-files:toggle'})
   } else if (event.altKey && event.keyCode===37) {
     return parent.postMessage({type:'keydown', action:'window:focus-pane-on-left'})
   } else if (event.altKey && event.keyCode===38) {
