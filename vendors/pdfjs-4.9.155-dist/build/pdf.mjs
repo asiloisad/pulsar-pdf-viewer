@@ -22,7 +22,7 @@
 
 /******/ // The require scope
 /******/ var __webpack_require__ = {};
-/******/ 
+/******/
 /************************************************************************/
 /******/ /* webpack/runtime/define property getters */
 /******/ (() => {
@@ -35,12 +35,12 @@
 /******/ 		}
 /******/ 	};
 /******/ })();
-/******/ 
+/******/
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
 /******/ (() => {
 /******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ })();
-/******/ 
+/******/
 /************************************************************************/
 var __webpack_exports__ = globalThis.pdfjsLib = {};
 
@@ -2397,6 +2397,12 @@ class AnnotationEditorUIManager {
       type
     } of event.dataTransfer.items) {
       for (const editorType of this.#editorTypes) {
+        // ===== FIX ===== //
+        if (type=="atom-tab-event") {
+          event.preventDefault();
+          return
+        }
+        // =============== //
         if (editorType.isHandlingMimeForPasting(type)) {
           event.dataTransfer.dropEffect = "copy";
           event.preventDefault();
@@ -2408,6 +2414,12 @@ class AnnotationEditorUIManager {
   drop(event) {
     for (const item of event.dataTransfer.items) {
       for (const editorType of this.#editorTypes) {
+        // ===== FIX ===== //
+        if (item.type=="atom-tab-event") {
+          event.preventDefault();
+          return
+        }
+        // =============== //
         if (editorType.isHandlingMimeForPasting(item.type)) {
           editorType.paste(item, this.currentLayer);
           event.preventDefault();

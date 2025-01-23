@@ -13567,9 +13567,14 @@ const PDFViewerApplication = {
       }
     });
     appConfig.mainContainer.addEventListener("drop", function (evt) {
-      if (evt.dataTransfer.files?.[0].type !== "application/pdf") {
+      // ===== FIX ===== //
+      // if (evt.dataTransfer.files?.[0].type !== "application/pdf") {
+      //   return;
+      // }
+      if (evt.dataTransfer.files?.[0]?.type !== "application/pdf") {
         return;
       }
+      // =============== //
       stopEvent(evt);
       eventBus.dispatch("fileinputchange", {
         source: this,
