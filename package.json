@@ -3,7 +3,6 @@
   "description": "PDF viewer based on PDF.js",
   "repository": "https://github.com/bacadra/pulsar-pdf-viewer",
   "keywords": [
-    "bacadra",
     "pdf",
     "viewer",
     "synctex",
