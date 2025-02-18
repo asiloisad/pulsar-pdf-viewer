@@ -1,7 +1,7 @@
 {
   "name": "pdf-viewer",
   "description": "PDF viewer based on PDF.js",
-  "repository": "https://github.com/bacadra/pulsar-pdf-viewer",
+  "repository": "https://github.com/asiloisad/pulsar-pdf-viewer",
   "keywords": [
     "pdf",
     "viewer",

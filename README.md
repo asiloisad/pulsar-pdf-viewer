@@ -2,13 +2,13 @@
 
 PDF viewer based on PDF.js. A package is a wrapper around Mozilla's PDF.js library, but adapted for the Pulsar environment.
 
-![title-pic](https://github.com/bacadra/pulsar-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
+![title-pic](https://github.com/asiloisad/pulsar-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
 
 PDF files can be opened from the Pulsar user interface, such as from the project tree view, or programmatically using `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Pulsar runs. The `uri` consists of the filepath and optionals [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
 
 ## Installation
 
-To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`. Alternatively, you can run `ppm install bacadra/pulsar-pdf-viewer` to install a package directly from the Github repository.
+To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`. Alternatively, you can run `ppm install asiloisad/pulsar-pdf-viewer` to install a package directly from the Github repository.
 
 ## Keyboard shortcuts
 
@@ -50,22 +50,22 @@ Additional keyboard shortcuts have been introduced:
 - Focus pane below: `Alt-Down`
 
 Some keymap of external packages have been implemented:
-- [[navigation-panel](https://github.com/bacadra/pulsar-navigation-panel)] Toggle panel: `Alt-N`
-- [[open-external](https://github.com/bacadra/pulsar-open-external)] Open external: `Alt-F12`
-- [[open-external](https://github.com/bacadra/pulsar-open-external)] Show in folder: `Ctrl-F12`
-- [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle recent list: `Alt-F10`
-- [[project-list](https://github.com/bacadra/pulsar-project-list)] Toggle project list: `F10`
-- [[fuzzy-files](https://github.com/bacadra/pulsar-fuzzy-files)] Toggle file list: `Ctrl-P`
+- [[navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel)] Toggle panel: `Alt-N`
+- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Open external: `Alt-F12`
+- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Show in folder: `Ctrl-F12`
+- [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle recent list: `Alt-F10`
+- [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle project list: `F10`
+- [[fuzzy-files](https://github.com/asiloisad/pulsar-fuzzy-files)] Toggle file list: `Ctrl-P`
 
 ## Style
 
 The style of the documents has been adapted to match the theme in Pulsar. As the style changes, you may notice the menu colors change. An additional option has been introduced to invert the colors of the document itself. To invert the document colors, change the options in the package settings, use `pdf-viewer:invert-mode` from the command palette, or press `F8` while viewing an active file.
 
-![dark-mode](https://github.com/bacadra/pulsar-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
+![dark-mode](https://github.com/asiloisad/pulsar-pdf-viewer/blob/master/assets/dark-mode.png?raw=true)
 
 ## Document outline
 
-The viewer supports the [navigation-panel](https://github.com/bacadra/pulsar-navigation-panel) package. You can search through the document using the all-in outline tree instead of the PDFjs outline.
+The viewer supports the [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel) package. You can search through the document using the all-in outline tree instead of the PDFjs outline.
 
 ## URI options
 
@@ -79,11 +79,11 @@ For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF
 
 The viewer can remember the page before a refresh and set it as the initial page after the refresh.
 
-![latex-synctex](https://github.com/bacadra/pulsar-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
+![latex-synctex](https://github.com/asiloisad/pulsar-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
 
 ## SOFiSTiK
 
-This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/bacadra/pulsar-sofistik-tools) package.
+This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools) package.
 
 # Contributing
 
