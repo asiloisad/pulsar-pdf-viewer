@@ -17,5 +17,49 @@
   "main": "./lib/main",
   "deserializers": {
     "pdf-viewer": "deserialize"
+  },
+  "configSchema": {
+    "autoRefresh": {
+      "order": 1,
+      "title": "Auto-reload on update",
+      "description": "Automatically reload when the file is updated. The window can be refreshed manually by press `F5` in pdf-viewer.",
+      "type": "boolean",
+      "default": true
+    },
+    "autoTime": {
+      "order": 2,
+      "title": "Auto-refresh delay",
+      "description": "The time in ms before reloading the pdf-viewer after the last detected change.",
+      "type": "integer",
+      "default": 1000
+    },
+    "closeDeleted": {
+      "order": 3,
+      "title": "Close panel if file deleted",
+      "description": "Set to true to automatically close the pdf-viewer when the disk file is deleted.",
+      "type": "boolean",
+      "default": true
+    },
+    "invertMode": {
+      "order": 4,
+      "title": "Invert colors",
+      "description": "Inverts the colours of the pages. This flag can be toggled by command `pdf-viewer:invert-mode`. It can be toggled per file by press `F8` in pdf-viewer.",
+      "type": "boolean",
+      "default": false
+    },
+    "synctexPath": {
+      "order": 5,
+      "title": "Path to SyncTeX binary",
+      "description": "Used for forward and reverse lookup, if the PDF has been generated with SyncTeX.",
+      "type": "string",
+      "default": "synctex"
+    },
+    "debugMode": {
+      "order": 6,
+      "title": "Debug mode",
+      "description": "Show some errors in console e.g. Synctex.",
+      "type": "boolean",
+      "default": false
+    }
   }
 }
