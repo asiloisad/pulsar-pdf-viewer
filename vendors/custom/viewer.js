@@ -20,6 +20,16 @@ window.onload = () => {
   PDFViewerApplicationOptions.set("isEvalSupported", false)
   PDFViewerApplicationOptions.set("disableHistory", true)
   parent.postMessage({ type: 'ready' })
+
+  PDFViewerApplication.eventBus.on('pagesinit', async () => {
+    const outline = await PDFViewerApplication.pdfDocument.getOutline();
+    parent.postMessage({ type: 'pdfjsOutline', outline: outline });
+  });
+
+  // Also listen for pagechanging to update the outline item automatically
+  PDFViewerApplication.eventBus.on('pagechanging', () => {
+    spawnCurrentDest();
+  });
 }
 
 window.addEventListener('keydown', (event) => {
@@ -145,6 +155,37 @@ function toggleInvertMode(data) {
   document.getElementById('viewer-less').innerText = css
 }
 
-function spawnCurrentDest() {
-  PDFViewerApplication.pdfOutlineViewer._currentOutlineItem()
+async function spawnCurrentDest() {
+  const pdfOutlineViewer = PDFViewerApplication.pdfOutlineViewer;
+  if (!pdfOutlineViewer._isPagesLoaded || !pdfOutlineViewer._outline || !pdfOutlineViewer._pdfDocument) {
+    return;
+  }
+
+  // We need to access the private _getPageNumberToDestHash method or replicate it.
+  // Since it's private, we might not be able to call it directly if it's not on the instance (it is on the instance in the class definition).
+  // Let's try to access it. If not, we can try to use the linkService.
+
+  let pageNumberToDestHash;
+  try {
+    pageNumberToDestHash = await pdfOutlineViewer._getPageNumberToDestHash(pdfOutlineViewer._pdfDocument);
+  } catch (e) {
+    console.error("Failed to get pageNumberToDestHash", e);
+    return;
+  }
+
+  if (!pageNumberToDestHash) {
+    return;
+  }
+
+  for (let i = PDFViewerApplication.page; i > 0; i--) {
+    const destHash = pageNumberToDestHash.get(i);
+    if (!destHash) {
+      continue;
+    }
+    // Send the found destHash to the parent
+    parent.postMessage({ type: 'currentOutlineItem', destHash: destHash });
+    break;
+  }
 }
+
+
