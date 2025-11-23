@@ -12,6 +12,8 @@ if (!URL.parse) {
   };
 }
 
+let cachedOutline = null;
+
 window.onload = () => {
   PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0)
   PDFViewerApplicationOptions.set("defaultZoomValue", 'auto')
@@ -23,13 +25,132 @@ window.onload = () => {
 
   PDFViewerApplication.eventBus.on('pagesinit', async () => {
     const outline = await PDFViewerApplication.pdfDocument.getOutline();
+
+    if (outline) {
+      // Enrich outline with destHash and pre-resolve destinations
+      await enrichItems(outline);
+      cachedOutline = outline;
+    }
+
     parent.postMessage({ type: 'pdfjsOutline', outline: outline });
   });
 
-  // Also listen for pagechanging to update the outline item automatically
-  PDFViewerApplication.eventBus.on('pagechanging', () => {
-    spawnCurrentDest();
-  });
+  // Also listen for pagechanging and updateviewarea to update the outline item automatically
+  const updateCurrent = () => spawnCurrentDest();
+  PDFViewerApplication.eventBus.on('pagechanging', updateCurrent);
+  PDFViewerApplication.eventBus.on('updateviewarea', updateCurrent);
+}
+
+// Helper to recursively enrich items and resolve destinations
+async function enrichItems(items) {
+  for (const item of items) {
+    if (item.dest) {
+      // 1. Get Hash
+      item.destHash = PDFViewerApplication.pdfLinkService.getDestinationHash(item.dest);
+
+      // 2. Resolve to Page Index and Coordinates (for fast scroll checking)
+      try {
+        let dest = item.dest;
+        if (typeof dest === 'string') {
+          dest = await PDFViewerApplication.pdfDocument.getDestination(dest);
+        }
+
+        if (Array.isArray(dest)) {
+          const pageRef = dest[0];
+          let pageIndex;
+
+          if (typeof pageRef === 'object') {
+            pageIndex = await PDFViewerApplication.pdfDocument.getPageIndex(pageRef);
+          } else if (Number.isInteger(pageRef)) {
+            pageIndex = pageRef;
+          }
+
+          if (pageIndex !== undefined) {
+            item.resolvedDest = {
+              pageIndex: pageIndex,
+              x: dest[2],
+              y: dest[3]
+            };
+          }
+        }
+      } catch (e) {
+        console.error("Error resolving dest for item", item, e);
+      }
+    }
+
+    if (item.items && item.items.length > 0) {
+      await enrichItems(item.items);
+    }
+  }
+}
+
+async function spawnCurrentDest() {
+  // If we have cached outline with resolved destinations, use it for fast sync calculation
+  if (cachedOutline) {
+    const pdfViewer = PDFViewerApplication.pdfViewer;
+    const container = pdfViewer.container;
+    const scrollTop = container.scrollTop;
+    const scrollBottom = scrollTop + container.clientHeight;
+    const visibleHashes = [];
+
+    // Flatten outline for linear scan
+    const flattenOutline = (items, result = []) => {
+      for (const item of items) {
+        result.push(item);
+        if (item.items && item.items.length > 0) {
+          flattenOutline(item.items, result);
+        }
+      }
+      return result;
+    };
+
+    const flatItems = flattenOutline(cachedOutline);
+    const itemPositions = [];
+
+    // Calculate current Y positions (synchronous)
+    for (const item of flatItems) {
+      if (item.resolvedDest) {
+        const pageView = pdfViewer.getPageView(item.resolvedDest.pageIndex);
+        if (pageView && pageView.div) {
+          const viewport = pageView.viewport;
+          // Convert PDF point to viewport point
+          // Note: convertToViewportPoint returns [x, y] relative to page
+          const [x, y] = viewport.convertToViewportPoint(item.resolvedDest.x, item.resolvedDest.y);
+
+          // Absolute Y in container
+          const absoluteY = pageView.div.offsetTop + y;
+          itemPositions.push({ item, y: absoluteY });
+        }
+      }
+    }
+
+    // Sort by Y
+    itemPositions.sort((a, b) => a.y - b.y);
+
+    // Check visibility
+    for (let i = 0; i < itemPositions.length; i++) {
+      const current = itemPositions[i];
+      const next = itemPositions[i + 1];
+
+      const startY = current.y;
+      // If no next item, assume end of document (or end of last page)
+      const endY = next ? next.y : pdfViewer.getPageView(pdfViewer.pagesCount - 1).div.offsetTop + pdfViewer.getPageView(pdfViewer.pagesCount - 1).div.clientHeight;
+
+      if (startY < scrollBottom && endY > scrollTop) {
+        if (current.item.destHash) {
+          visibleHashes.push(current.item.destHash);
+        }
+      }
+    }
+
+    if (visibleHashes.length > 0) {
+      parent.postMessage({ type: 'currentOutlineItem', destHash: visibleHashes });
+    }
+    return;
+  }
+
+  // Fallback for non-cached (shouldn't happen after init) or if pre-calc failed
+  // ... (omitted for brevity, relying on cachedOutline)
 }
 
 window.addEventListener('keydown', (event) => {
@@ -154,38 +275,3 @@ function toggleInvertMode(data) {
   css = stateInvertMode ? '.page, .thumbnailImage {filter: invert(100%);}' : '.page, .thumbnailImage {filter: invert(0%);}'
   document.getElementById('viewer-less').innerText = css
 }
-
-async function spawnCurrentDest() {
-  const pdfOutlineViewer = PDFViewerApplication.pdfOutlineViewer;
-  if (!pdfOutlineViewer._isPagesLoaded || !pdfOutlineViewer._outline || !pdfOutlineViewer._pdfDocument) {
-    return;
-  }
-
-  // We need to access the private _getPageNumberToDestHash method or replicate it.
-  // Since it's private, we might not be able to call it directly if it's not on the instance (it is on the instance in the class definition).
-  // Let's try to access it. If not, we can try to use the linkService.
-
-  let pageNumberToDestHash;
-  try {
-    pageNumberToDestHash = await pdfOutlineViewer._getPageNumberToDestHash(pdfOutlineViewer._pdfDocument);
-  } catch (e) {
-    console.error("Failed to get pageNumberToDestHash", e);
-    return;
-  }
-
-  if (!pageNumberToDestHash) {
-    return;
-  }
-
-  for (let i = PDFViewerApplication.page; i > 0; i--) {
-    const destHash = pageNumberToDestHash.get(i);
-    if (!destHash) {
-      continue;
-    }
-    // Send the found destHash to the parent
-    parent.postMessage({ type: 'currentOutlineItem', destHash: destHash });
-    break;
-  }
-}
-
-
