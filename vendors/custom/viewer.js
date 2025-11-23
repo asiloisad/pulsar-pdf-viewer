@@ -1,6 +1,3 @@
-// supress all output from pdfjs
-console.log = console.error = console.warn = () => { }
-
 // Polyfill for URL.parse (required by PDF.js v5)
 if (!URL.parse) {
   URL.parse = function (url, base) {
@@ -183,10 +180,6 @@ window.addEventListener('keydown', (event) => {
   }
 })
 
-window.addEventListener('click', () => {
-  parent.postMessage({ type: 'click' })
-})
-
 window.addEventListener('contextmenu', (event) => {
   const page = event.target.closest('div.page')
   if (!page) { return }
@@ -216,7 +209,7 @@ window.addEventListener('contextmenu', (event) => {
   x = Math.round(x / res * 72)
   y = Math.round(y / res * 72)
   parent.postMessage({ type: 'contextmenu', pageNo: pageNo, x: x, y: y })
-})
+}, true)
 
 window.addEventListener("message", (message) => {
   if (message.source !== parent) {
