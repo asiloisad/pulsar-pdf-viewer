@@ -1,3 +1,8 @@
+// supress output from pdfjs
+const _console = { log: console.log, error: console.error, warn: console.warn, info: console.info };
+console.log = console.info = console.warn = () => { };
+// console.error = () => { }; // Keep errors for now
+
 // Polyfill for URL.parse (required by PDF.js v5)
 if (!URL.parse) {
   URL.parse = function (url, base) {
@@ -155,6 +160,9 @@ window.addEventListener('keydown', (event) => {
     return toggleInvertMode()
   } else if (event.ctrlKey && event.keyCode === 116) {
     return parent.postMessage({ type: 'keydown', action: 'toggle-refreshing' })
+  } else if (event.ctrlKey && event.keyCode === 80) { // Ctrl+P
+    event.preventDefault();
+    return parent.postMessage({ type: 'keydown', action: 'fuzzy-finder:toggle-file-finder' })
   } else if (event.keyCode === 116) {
     return refreshContents({ filePath: PDFViewerApplication.url })
   } else if (event.keyCode === 112) {
@@ -178,7 +186,7 @@ window.addEventListener('keydown', (event) => {
   } else if (event.altKey && event.keyCode === 40) {
     return parent.postMessage({ type: 'keydown', action: 'window:focus-pane-below' })
   }
-})
+}, true)
 
 window.addEventListener('contextmenu', (event) => {
   const page = event.target.closest('div.page')
