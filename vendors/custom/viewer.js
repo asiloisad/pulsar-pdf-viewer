@@ -1,6 +1,17 @@
 // supress all output from pdfjs
 console.log = console.error = console.warn = () => { }
 
+// Polyfill for URL.parse (required by PDF.js v5)
+if (!URL.parse) {
+  URL.parse = function (url, base) {
+    try {
+      return new URL(url, base);
+    } catch (e) {
+      return null;
+    }
+  };
+}
+
 window.onload = () => {
   PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0)
   PDFViewerApplicationOptions.set("defaultZoomValue", 'auto')
