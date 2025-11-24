@@ -155,6 +155,11 @@ async function spawnCurrentDest() {
   // ... (omitted for brevity, relying on cachedOutline)
 }
 
+// Send click event to parent to activate pane
+window.addEventListener('mousedown', (event) => {
+  parent.postMessage({ type: 'click', button: event.button })
+}, true)
+
 window.addEventListener('keydown', (event) => {
   if (event.keyCode === 119) {
     return toggleInvertMode()
