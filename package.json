@@ -18,6 +18,13 @@
   "deserializers": {
     "pdf-viewer": "deserialize"
   },
+  "consumedServices": {
+    "latex-tools.build": {
+      "versions": {
+        "1.0.0": "consumeBuildStatus"
+      }
+    }
+  },
   "configSchema": {
     "autoRefresh": {
       "order": 1,
