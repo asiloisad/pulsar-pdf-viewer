@@ -61,9 +61,9 @@
       "type": "string",
       "default": "synctex"
     },
-    "debugMode": {
+    "debug": {
       "order": 6,
-      "title": "Debug mode",
+      "title": "Debug",
       "description": "Show some errors in console e.g. Synctex.",
       "type": "boolean",
       "default": false
