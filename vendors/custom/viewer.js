@@ -15,6 +15,28 @@ if (!URL.parse) {
 }
 
 let cachedOutline = null;
+let pendingRefreshData = null;
+
+// Watch for visibility changes to handle pending refresh when tab becomes visible
+function setupVisibilityObserver() {
+  if (!window.frameElement) return;
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+        const display = window.frameElement.style.display;
+        if (display !== 'none' && pendingRefreshData) {
+          // We just became visible and have a pending refresh
+          const data = pendingRefreshData;
+          pendingRefreshData = null;
+          refreshContents(data);
+        }
+      }
+    }
+  });
+
+  observer.observe(window.frameElement, { attributes: true, attributeFilter: ['style'] });
+}
 
 window.onload = () => {
   PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0)
@@ -23,6 +45,7 @@ window.onload = () => {
   PDFViewerApplicationOptions.set("externalLinkTarget", 4)
   PDFViewerApplicationOptions.set("isEvalSupported", false)
   PDFViewerApplicationOptions.set("disableHistory", true)
+  setupVisibilityObserver()
   parent.postMessage({ type: 'ready' })
 
   PDFViewerApplication.eventBus.on('pagesinit', async () => {
@@ -244,8 +267,13 @@ let lastParams = { page: 1, zoom: 'auto' }
 
 function refreshContents(data) {
   if (window.frameElement && window.frameElement.style.display === "none") {
+    // Store the refresh request for when we become visible
+    pendingRefreshData = data
     return
-  } else if (PDFViewerApplication.pagesCount > 1) {
+  }
+  // Clear any pending refresh since we're doing it now
+  pendingRefreshData = null
+  if (PDFViewerApplication.pagesCount > 1) {
     lastParams.page = PDFViewerApplication.page
     lastParams.zoom = PDFViewerApplication.pdfViewer.currentScaleValue
     if (/^\d+(?:\.\d+)?$/.test(lastParams.zoom)) {
