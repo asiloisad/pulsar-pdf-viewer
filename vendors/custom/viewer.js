@@ -184,15 +184,27 @@ window.addEventListener('mousedown', (event) => {
 }, true)
 
 window.addEventListener('keydown', (event) => {
+  // Handle F5 variants first with explicit modifier checks
+  if (event.keyCode === 116) { // F5
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.ctrlKey && (event.altKey || event.shiftKey)) {
+      // Ctrl+Alt+F5 or Ctrl+Shift+F5 - window reload
+      return parent.postMessage({ type: 'keydown', action: 'window:reload' })
+    } else if (event.ctrlKey) {
+      // Ctrl+F5 - toggle auto-refresh
+      return parent.postMessage({ type: 'keydown', action: 'toggle-refreshing' })
+    } else if (!event.altKey && !event.shiftKey) {
+      // F5 - refresh PDF
+      return refreshContents({ filePath: PDFViewerApplication.url })
+    }
+    return; // Other combos - do nothing
+  }
   if (event.keyCode === 119) {
     return toggleInvertMode()
-  } else if (event.ctrlKey && event.keyCode === 116) {
-    return parent.postMessage({ type: 'keydown', action: 'toggle-refreshing' })
   } else if (event.ctrlKey && event.keyCode === 80) { // Ctrl+P
     event.preventDefault();
     return parent.postMessage({ type: 'keydown', action: 'fuzzy-finder:toggle-file-finder' })
-  } else if (event.keyCode === 116) {
-    return refreshContents({ filePath: PDFViewerApplication.url })
   } else if (event.keyCode === 112) {
     return parent.postMessage({ type: 'keydown', action: 'command-palette:toggle' })
   } else if (event.altKey && event.keyCode === 78) {
