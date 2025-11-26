@@ -200,6 +200,18 @@ window.addEventListener('keydown', (event) => {
     }
     return; // Other combos - do nothing
   }
+  // F6 - compile LaTeX
+  if (event.keyCode === 117 && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+    event.preventDefault();
+    event.stopPropagation();
+    return parent.postMessage({ type: 'keydown', action: 'pdf-viewer:compile' })
+  }
+  // F7 - open associated .tex file
+  if (event.keyCode === 118 && !event.ctrlKey && !event.altKey && !event.shiftKey) {
+    event.preventDefault();
+    event.stopPropagation();
+    return parent.postMessage({ type: 'keydown', action: 'pdf-viewer:open-tex' })
+  }
   if (event.keyCode === 119) {
     return toggleInvertMode()
   } else if (event.ctrlKey && event.keyCode === 80) { // Ctrl+P

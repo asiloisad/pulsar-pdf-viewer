@@ -4,3 +4,5 @@
 '.pdf-viewer':
   'ctrl-alt-f5': 'window:reload'
   'ctrl-shift-f5': 'window:reload'
+  'f6': 'pdf-viewer:compile'
+  'f7': 'pdf-viewer:open-tex'
