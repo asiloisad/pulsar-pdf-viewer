@@ -2,4 +2,27 @@
   border: none;
   width: 100%;
   height: 100%;
+
+  // Scroll-map positioning when sibling to pdf-viewer iframe
+  & + .scroll-map {
+    position: absolute;
+    top: 0;
+    left: auto;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+
+    .scroll-item {
+      pointer-events: auto;
+    }
+  }
+}
+
+// Ensure the pane item container has position relative for absolute positioning
+.item-views > .pane > .item-views {
+  position: relative;
 }

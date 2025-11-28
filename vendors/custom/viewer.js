@@ -69,6 +69,9 @@ window.onload = () => {
     }
 
     parent.postMessage({ type: "pdfjsOutline", outline: outline });
+
+    // Send initial scroll-map data after outline is ready
+    spawnCurrentDest();
   });
 
   // Also listen for pagechanging and updateviewarea to update the outline item automatically
@@ -133,12 +136,12 @@ async function spawnCurrentDest() {
     const scrollBottom = scrollTop + container.clientHeight;
     const visibleHashes = [];
 
-    // Flatten outline for linear scan
-    const flattenOutline = (items, result = []) => {
+    // Flatten outline for linear scan, tracking nesting level
+    const flattenOutline = (items, level = 0, result = []) => {
       for (const item of items) {
-        result.push(item);
+        result.push({ item, level });
         if (item.items && item.items.length > 0) {
-          flattenOutline(item.items, result);
+          flattenOutline(item.items, level + 1, result);
         }
       }
       return result;
@@ -148,7 +151,7 @@ async function spawnCurrentDest() {
     const itemPositions = [];
 
     // Calculate current Y positions (synchronous)
-    for (const item of flatItems) {
+    for (const { item, level } of flatItems) {
       if (item.resolvedDest) {
         const pageView = pdfViewer.getPageView(item.resolvedDest.pageIndex);
         if (pageView && pageView.div) {
@@ -162,7 +165,7 @@ async function spawnCurrentDest() {
 
           // Absolute Y in container
           const absoluteY = pageView.div.offsetTop + y;
-          itemPositions.push({ item, y: absoluteY });
+          itemPositions.push({ item, level, y: absoluteY });
         }
       }
     }
@@ -189,10 +192,27 @@ async function spawnCurrentDest() {
       }
     }
 
-    if (visibleHashes.length > 0) {
+    // Send current outline item(s) if any are visible
+    parent.postMessage({
+      type: "currentOutlineItem",
+      destHash: visibleHashes,
+    });
+
+    // Send scroll-map data with all outline positions
+    const totalHeight = container.scrollHeight;
+    if (totalHeight > 0 && itemPositions.length > 0) {
+      const scrollMapItems = itemPositions.map((pos) => ({
+        percent: (pos.y / totalHeight) * 100,
+        page: pos.item.resolvedDest?.pageIndex,
+        x: pos.item.resolvedDest?.x || 0,
+        y: pos.item.resolvedDest?.y || 0,
+        level: pos.level,
+        isCurrent: visibleHashes.includes(pos.item.destHash),
+      }));
       parent.postMessage({
-        type: "currentOutlineItem",
-        destHash: visibleHashes,
+        type: "scrollMapData",
+        items: scrollMapItems,
+        scrollPercent: (scrollTop / totalHeight) * 100,
       });
     }
     return;

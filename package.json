@@ -23,6 +23,11 @@
       "versions": {
         "1.0.0": "consumeBuildStatus"
       }
+    },
+    "scroll-map": {
+      "versions": {
+        "0.0.1": "consumeScrollMap"
+      }
     }
   },
   "configSchema": {
