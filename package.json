@@ -18,6 +18,13 @@
   "deserializers": {
     "pdf-viewer": "deserialize"
   },
+  "providedServices": {
+    "pdf-viewer": {
+      "versions": {
+        "1.0.0": "provideViewer"
+      }
+    }
+  },
   "consumedServices": {
     "latex-tools.build": {
       "versions": {

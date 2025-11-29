@@ -96,28 +96,31 @@ async function enrichItems(items) {
           dest = await PDFViewerApplication.pdfDocument.getDestination(dest);
         }
 
-        if (Array.isArray(dest)) {
-          const pageRef = dest[0];
-          let pageIndex;
+        // Skip if destination couldn't be resolved (null or not an array)
+        if (!dest || !Array.isArray(dest)) {
+          continue;
+        }
 
-          if (typeof pageRef === "object") {
-            pageIndex = await PDFViewerApplication.pdfDocument.getPageIndex(
-              pageRef
-            );
-          } else if (Number.isInteger(pageRef)) {
-            pageIndex = pageRef;
-          }
+        const pageRef = dest[0];
+        let pageIndex;
 
-          if (pageIndex !== undefined) {
-            item.resolvedDest = {
-              pageIndex: pageIndex,
-              x: dest[2],
-              y: dest[3],
-            };
-          }
+        if (typeof pageRef === "object") {
+          pageIndex = await PDFViewerApplication.pdfDocument.getPageIndex(
+            pageRef
+          );
+        } else if (Number.isInteger(pageRef)) {
+          pageIndex = pageRef;
+        }
+
+        if (pageIndex !== undefined) {
+          item.resolvedDest = {
+            pageIndex: pageIndex,
+            x: dest[2],
+            y: dest[3],
+          };
         }
       } catch (e) {
-        console.error("Error resolving dest for item", item, e);
+        // Ignore errors for unresolvable destinations (e.g., missing named destinations)
       }
     }
 
@@ -155,16 +158,17 @@ async function spawnCurrentDest() {
       if (item.resolvedDest) {
         const pageView = pdfViewer.getPageView(item.resolvedDest.pageIndex);
         if (pageView && pageView.div) {
+          // Get Y position within page from PDF coordinates
+          // PDF y-coordinate is from bottom, convert to top-down viewport position
           const viewport = pageView.viewport;
-          // Convert PDF point to viewport point
-          // Note: convertToViewportPoint returns [x, y] relative to page
-          const [x, y] = viewport.convertToViewportPoint(
-            item.resolvedDest.x,
-            item.resolvedDest.y
-          );
+          const pdfY = item.resolvedDest.y || 0;
+          // viewport.height is the rendered page height
+          // Scale the PDF y-coordinate to viewport pixels
+          const scale = viewport.scale;
+          const yInPage = (viewport.viewBox[3] - pdfY) * scale;
 
-          // Absolute Y in container
-          const absoluteY = pageView.div.offsetTop + y;
+          // Absolute Y in container = page top + position within page
+          const absoluteY = pageView.div.offsetTop + yInPage;
           itemPositions.push({ item, level, y: absoluteY });
         }
       }
@@ -199,10 +203,21 @@ async function spawnCurrentDest() {
     });
 
     // Send scroll-map data with all outline positions
+    // Account for toolbar height - container.offsetTop gives the offset from the iframe top
+    const toolbarHeight = container.offsetTop;
     const totalHeight = container.scrollHeight;
+    const iframeHeight = window.innerHeight;
+    const scrollableHeight = iframeHeight - toolbarHeight;
+
     if (totalHeight > 0 && itemPositions.length > 0) {
+      // Calculate percent within the scrollable area (excluding toolbar)
+      // Map positions to the visible scroll-map area
+      const toolbarPercent = (toolbarHeight / iframeHeight) * 100;
+      const contentPercent = (scrollableHeight / iframeHeight) * 100;
+
       const scrollMapItems = itemPositions.map((pos) => ({
-        percent: (pos.y / totalHeight) * 100,
+        // Offset by toolbar and scale to the content area
+        percent: toolbarPercent + (pos.y / totalHeight) * contentPercent,
         page: pos.item.resolvedDest?.pageIndex,
         x: pos.item.resolvedDest?.x || 0,
         y: pos.item.resolvedDest?.y || 0,
