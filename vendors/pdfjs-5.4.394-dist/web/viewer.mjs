@@ -26,7 +26,7 @@
  */
 /******/ // The require scope
 /******/ var __webpack_require__ = {};
-/******/ 
+/******/
 /************************************************************************/
 /******/ /* webpack/runtime/define property getters */
 /******/ (() => {
@@ -39,12 +39,12 @@
 /******/ 		}
 /******/ 	};
 /******/ })();
-/******/ 
+/******/
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
 /******/ (() => {
 /******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ })();
-/******/ 
+/******/
 /************************************************************************/
 var __webpack_exports__ = {};
 
@@ -116,7 +116,7 @@ const DEFAULT_SCALE_DELTA = 1.1;
 const MIN_SCALE = 0.1;
 const MAX_SCALE = 10.0;
 const UNKNOWN_SCALE = 0;
-const MAX_AUTO_SCALE = 1.25;
+const MAX_AUTO_SCALE = 1.50; // FIX //
 const SCROLLBAR_PADDING = 40;
 const VERTICAL_PADDING = 5;
 const RenderingStates = {
