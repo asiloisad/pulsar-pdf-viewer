@@ -33,7 +33,7 @@
     },
     "scroll-map": {
       "versions": {
-        "0.0.1": "consumeScrollMap"
+        "^1.0.0": "consumeScrollMap"
       }
     }
   },
@@ -79,6 +79,21 @@
       "description": "Show some errors in console e.g. Synctex.",
       "type": "boolean",
       "default": false
+    },
+    "scrollMapState": {
+      "order": 7,
+      "type": "boolean",
+      "title": "Scroll Map",
+      "description": "Display outline markers on scroll bar.",
+      "default": true
+    },
+    "scrollMapThreshold": {
+      "order": 8,
+      "type": "integer",
+      "title": "Scroll Map Threshold",
+      "description": "Maximum number of markers to display. The limit doesn't apply if zero.",
+      "minimum": 0,
+      "default": 0
     }
   }
 }

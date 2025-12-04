@@ -85,7 +85,7 @@ The viewer can remember the page before a refresh and set it as the initial page
 
 This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools) package.
 
-## Scroll Map Integration
+## Scroll-Map 
 
 The package integrates with [scroll-map](https://github.com/asiloisad/pulsar-scroll-map) to display document outline markers on the scroll bar. When viewing a PDF with an outline (table of contents), markers are displayed for each heading level with different colors:
 
