@@ -1,6 +1,7 @@
 {
   "name": "pdf-viewer",
   "description": "PDF viewer based on PDF.js",
+  "pdfjsVersion": "5.4.449",
   "repository": "https://github.com/asiloisad/pulsar-pdf-viewer",
   "keywords": [
     "pdf",
@@ -15,6 +16,9 @@
     "atom": ">=1.100.0 <2.0.0"
   },
   "main": "./lib/main",
+  "scripts": {
+    "update": "node scripts/update.js"
+  },
   "deserializers": {
     "pdf-viewer": "deserialize"
   },
