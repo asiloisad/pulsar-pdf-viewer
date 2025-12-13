@@ -37,7 +37,7 @@
     },
     "scroll-map": {
       "versions": {
-        "^2.0.0": "consumeScrollMap"
+        "3.0.0": "consumeScrollMap"
       }
     }
   },
