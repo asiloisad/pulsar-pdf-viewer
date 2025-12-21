@@ -35,9 +35,9 @@
         "1.0.0": "consumeBuildStatus"
       }
     },
-    "scroll-map": {
+    "simplemap": {
       "versions": {
-        "3.0.0": "consumeScrollMap"
+        "1.0.0": "consumeSimpleMap"
       }
     }
   },
