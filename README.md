@@ -87,15 +87,7 @@ This package is adapted to support `sofistik-tools` for help functions using sea
 
 ## Scrollmap
 
-The package integrates with [scrollmap](https://github.com/asiloisad/pulsar-scrollmap) to display document outline markers on the scroll bar. When viewing a PDF with an outline (table of contents), markers are displayed for each heading level with different colors:
-
-- **H1** headers use `@ui-site-color-1`
-- **H2** headers use `@ui-site-color-2`
-- **H3** headers use `@ui-site-color-3`
-- **H4** headers use `@ui-site-color-4`
-- **H5/H6** headers use `@ui-site-color-5`
-
-Clicking on a marker navigates to that section in the PDF. The current visible section is highlighted with `@text-color-highlight`.
+For scrollmap integration, install the [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer) package which displays document outline markers on the scroll bar.
 
 # Contributing
 

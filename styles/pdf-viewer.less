@@ -4,51 +4,9 @@
   border: none;
   width: 100%;
   height: 100%;
-
-  // Scroll-map positioning when sibling to pdf-viewer iframe
-  & + .simplemap {
-    position: absolute;
-    top: 0;
-    left: auto;
-    right: 0;
-    bottom: 0;
-    width: 10px;
-    z-index: 10;
-    pointer-events: none;
-    display: flex;
-    justify-content: center;
-
-    .marker {
-      pointer-events: auto;
-    }
-  }
 }
 
 // Ensure the pane item container has position relative for absolute positioning
 .item-views > .pane > .item-views {
   position: relative;
-}
-
-// simplemap layer markers for PDF outline
-.simplemap .marker {
-  &.marker-pdf-current {
-    height: 6px;
-    background-color: @ui-site-color-1;
-    z-index: 15;
-  }
-  &.marker-pdf-h1 {
-    height: 4px;
-    background-color: @ui-site-color-2;
-    z-index: 14;
-  }
-  &.marker-pdf-h2 {
-    height: 3px;
-    background-color: @ui-site-color-3;
-    z-index: 13;
-  }
-  &.marker-pdf-h3, &.marker-pdf-h4, &.marker-pdf-h5, &.marker-pdf-h6 {
-    height: 2px;
-    background-color: @ui-site-color-4;
-    z-index: 12;
-  }
 }

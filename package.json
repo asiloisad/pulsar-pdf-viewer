@@ -34,11 +34,6 @@
       "versions": {
         "1.0.0": "consumeBuildStatus"
       }
-    },
-    "simplemap": {
-      "versions": {
-        "1.0.0": "consumeSimpleMap"
-      }
     }
   },
   "configSchema": {
@@ -83,13 +78,6 @@
       "description": "Show some errors in console e.g. Synctex.",
       "type": "boolean",
       "default": false
-    },
-    "scrollMapState": {
-      "order": 7,
-      "type": "boolean",
-      "title": "Scroll Map",
-      "description": "Display outline markers on scroll bar.",
-      "default": true
     }
   }
 }
