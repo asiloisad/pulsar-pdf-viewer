@@ -1,14 +1,38 @@
 # pdf-viewer
 
-PDF viewer based on PDF.js. A package is a wrapper around Mozilla's PDF.js library, but adapted for the Pulsar environment.
+View PDF files directly in Pulsar. Based on Mozilla's PDF.js with theme integration, SyncTeX support, and document outline.
 
 ![title-pic](https://github.com/asiloisad/pulsar-pdf-viewer/blob/master/assets/title-pic.png?raw=true)
 
-PDF files can be opened from the Pulsar user interface, such as from the project tree view, or programmatically using `atom.workspace.open(uri)`. The package watches for file changes and reloads the PDF if necessary. Viewer panes are persistent across Pulsar runs. The `uri` consists of the filepath and optionals [parameters](https://github.com/mozilla/pdf.js/wiki/Viewer-options).
+## Features
+
+- **PDF.js integration**: Full-featured PDF viewing in editor panes.
+- **Theme support**: Adapts to Pulsar UI and syntax themes.
+- **Color inversion**: Dark mode for PDFs with `F8` toggle.
+- **SyncTeX**: Forward and backward search for LaTeX files.
+- **Auto-reload**: Watches for file changes and refreshes.
+- **Document outline**: Navigate via [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel).
+- **Scrollmap**: Shows outline markers via [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer).
 
 ## Installation
 
 To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/packages/pdf-viewer) in the Install pane of the Pulsar settings or run `ppm install pdf-viewer`. Alternatively, you can run `ppm install asiloisad/pulsar-pdf-viewer` to install a package directly from the GitHub repository.
+
+## Commands
+
+Commands available in `atom-workspace`:
+
+- `pdf-viewer:reload-all`: reload all open PDF viewers,
+- `pdf-viewer:invert-mode`: (`F8`) toggle color inversion for all viewers.
+
+Commands available in `atom-text-editor[data-grammar~="latex"]`:
+
+- `pdf-viewer:synctex`: (`Alt+F8`) jump to corresponding PDF location.
+
+Commands available in `.pdf-viewer`:
+
+- `pdf-viewer:compile`: compile the source `.tex` file,
+- `pdf-viewer:open-tex`: open the corresponding `.tex` file.
 
 ## Keyboard shortcuts
 
@@ -16,46 +40,47 @@ The keyboard shortcuts within the PDF.js viewer remain unchanged and cannot be m
 
 - The `Home`, `End`, `PageUp`, `PageDown`, and arrow keys can be used to navigate the document.
 - Next page: `N`, `J`, `Space` (presentation mode only), `Enter` (presentation mode only), or `LeftClick` (presentation mode only).
-- Previous page: `P`, `K`, `Shift-Space` (presentation mode only), `Shift-Enter` (presentation mode only), or `Shift-LeftClick` (presentation mode only).
-- User interface buttons or `Ctrl-MouseWheel` can be used to change the zoom level.
-- Zoom in: `Ctrl-+`, `Ctrl-=`.
-- Zoom out: `Ctrl--`.
-- Restore normal zoom: `Ctrl-0`.
+- Previous page: `P`, `K`, `Shift+Space` (presentation mode only), `Shift+Enter` (presentation mode only), or `Shift+LeftClick` (presentation mode only).
+- User interface buttons or `Ctrl+MouseWheel` can be used to change the zoom level.
+- Zoom in: `Ctrl++`, `Ctrl+=`.
+- Zoom out: `Ctrl+-`.
+- Restore normal zoom: `Ctrl+0`.
 - Rotate the document clockwise: `R`.
-- Rotate the document counterclockwise: `Shift-R`.
-- Activate presentation mode: `Ctrl-Alt-P`.
+- Rotate the document counterclockwise: `Shift+R`.
+- Activate presentation mode: `Ctrl+Alt+P`.
 - Enable the hand tool: `H`.
 - Enable the text selection tool: `S`.
-- Move focus to the 'go to page' box: `Ctrl-Alt-G`.
-- Find text in the document: `Ctrl-F`.
-- Find the next occurrence of text in the document: `Ctrl-G`.
-- Find the previous occurrence of text in the document: `Ctrl-Shift-G`.
+- Move focus to the 'go to page' box: `Ctrl+Alt+G`.
+- Find text in the document: `Ctrl+F`.
+- Find the next occurrence of text in the document: `Ctrl+G`.
+- Find the previous occurrence of text in the document: `Ctrl+Shift+G`.
 - Print the document: unset.
-- Download the document: `Ctrl-S`.
-- Open a file: `Ctrl-O`.
+- Download the document: `Ctrl+S`.
+- Open a file: `Ctrl+O`.
 - Use `F4` to toggle the visibility of the sidebar.
 
 After showing the sidebar, click on the "Show document outline" button to display the document outline (if the PDF file has one). Nested outline items can be expanded/collapsed by clicking on the triangles to the left of an item. To expand/collapse all items under the selected item, press `Shift` while clicking on the triangle. Double-click on the "Show document outline" button to expand/collapse all outline items.
 
 Additional keyboard shortcuts have been introduced:
 
-- Open command palette: `Ctrl-Shift-P`, `F1`.
+- Open command palette: `Ctrl+Shift+P`, `F1`.
 - Refresh content for the current viewer: `F5`.
-- Toggle auto-refresh for the current viewer: `Ctrl-F5`.
+- Toggle auto-refresh for the current viewer: `Ctrl+F5`.
 - Invert colors for the current viewer: `F8`.
 - Use SyncTeX and go to the corresponding `.tex` file if available: `Right-click`.
-- Focus pane on left: `Alt-Left`
-- Focus pane above: `Alt-Up`
-- Focus pane on right: `Alt-Right`
-- Focus pane below: `Alt-Down`
+- Focus pane on left: `Alt+Left`
+- Focus pane above: `Alt+Up`
+- Focus pane on right: `Alt+Right`
+- Focus pane below: `Alt+Down`
 
 Some keymap of external packages have been implemented:
-- [[navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel)] Toggle panel: `Alt-N`
-- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Open external: `Alt-F12`
-- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Show in folder: `Ctrl-F12`
-- [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle recent list: `Alt-F10`
+
+- [[navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel)] Toggle panel: `Alt+N`
+- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Open external: `Alt+F12`
+- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Show in folder: `Ctrl+F12`
+- [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle recent list: `Alt+F10`
 - [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle project list: `F10`
-- [[fuzzy-files](https://github.com/asiloisad/pulsar-fuzzy-files)] Toggle file list: `Ctrl-P`
+- [[fuzzy-files](https://github.com/asiloisad/pulsar-fuzzy-files)] Toggle file list: `Ctrl+P`
 
 ## Style
 
@@ -85,10 +110,6 @@ The viewer can remember the page before a refresh and set it as the initial page
 
 This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools) package.
 
-## Scrollmap
+## Contributing
 
-For scrollmap integration, install the [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer) package which displays document outline markers on the scroll bar.
-
-# Contributing
-
-Got ideas to make this package better, found a bug, or want to help add new features? Just drop your thoughts on GitHub — any feedback’s welcome!
+Got ideas to make this package better, found a bug, or want to help add new features? Just drop your thoughts on GitHub — any feedback's welcome!
