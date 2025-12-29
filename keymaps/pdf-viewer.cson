@@ -1,6 +1,3 @@
-'atom-text-editor[data-grammar~="latex"]':
-  'alt-f7': 'pdf-viewer:synctex'
-
 '.pdf-viewer':
   'ctrl-alt-f5': 'window:reload'
   'ctrl-shift-f5': 'window:reload'

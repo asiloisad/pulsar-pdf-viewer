@@ -30,9 +30,9 @@
     }
   },
   "consumedServices": {
-    "latex-tools.build": {
+    "latex-tools": {
       "versions": {
-        "1.0.0": "consumeBuildStatus"
+        "1.0.0": "consumeLatexTools"
       }
     }
   },
@@ -65,17 +65,10 @@
       "type": "boolean",
       "default": false
     },
-    "synctexPath": {
-      "order": 5,
-      "title": "Path to SyncTeX binary",
-      "description": "Used for forward and reverse lookup, if the PDF has been generated with SyncTeX.",
-      "type": "string",
-      "default": "synctex"
-    },
     "debug": {
-      "order": 6,
+      "order": 5,
       "title": "Debug",
-      "description": "Show some errors in console e.g. Synctex.",
+      "description": "Show some errors in console.",
       "type": "boolean",
       "default": false
     }

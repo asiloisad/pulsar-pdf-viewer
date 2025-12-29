@@ -9,8 +9,8 @@ View PDF files directly in Pulsar. Based on Mozilla's PDF.js with theme integrat
 - **PDF.js integration**: Full-featured PDF viewing in editor panes.
 - **Theme support**: Adapts to Pulsar UI and syntax themes.
 - **Color inversion**: Dark mode for PDFs with `F8` toggle.
-- **SyncTeX**: Forward and backward search for LaTeX files.
 - **Auto-reload**: Watches for file changes and refreshes.
+- **SyncTeX**: Forward and backward search for LaTeX files via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
 - **Document outline**: Navigate via [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel).
 - **Scrollmap**: Shows outline markers via [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer).
 
@@ -25,14 +25,10 @@ Commands available in `atom-workspace`:
 - `pdf-viewer:reload-all`: reload all open PDF viewers,
 - `pdf-viewer:invert-mode`: (`F8`) toggle color inversion for all viewers.
 
-Commands available in `atom-text-editor[data-grammar~="latex"]`:
-
-- `pdf-viewer:synctex`: (`Alt+F8`) jump to corresponding PDF location.
-
 Commands available in `.pdf-viewer`:
 
-- `pdf-viewer:compile`: compile the source `.tex` file,
-- `pdf-viewer:open-tex`: open the corresponding `.tex` file.
+- `pdf-viewer:compile`: (`F6`) compile the source `.tex` file using [latex-tools](https://github.com/asiloisad/pulsar-latex-tools),
+- `pdf-viewer:open-tex`: (`F7`) open the corresponding `.tex` file.
 
 ## Keyboard shortcuts
 
@@ -66,8 +62,8 @@ Additional keyboard shortcuts have been introduced:
 - Open command palette: `Ctrl+Shift+P`, `F1`.
 - Refresh content for the current viewer: `F5`.
 - Toggle auto-refresh for the current viewer: `Ctrl+F5`.
+- Open corresponding `.tex` file: `F7`.
 - Invert colors for the current viewer: `F8`.
-- Use SyncTeX and go to the corresponding `.tex` file if available: `Right-click`.
 - Focus pane on left: `Alt+Left`
 - Focus pane above: `Alt+Up`
 - Focus pane on right: `Alt+Right`
@@ -75,6 +71,8 @@ Additional keyboard shortcuts have been introduced:
 
 Some keymap of external packages have been implemented:
 
+- [[latex-tools](https://github.com/asiloisad/pulsar-latex-tools)] Compile source `.tex` file: `F6`
+- [[latex-tools](https://github.com/asiloisad/pulsar-latex-tools)] Backward SyncTeX (go to `.tex` source): `Right-click`.
 - [[navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel)] Toggle panel: `Alt+N`
 - [[open-external](https://github.com/asiloisad/pulsar-open-external)] Open external: `Alt+F12`
 - [[open-external](https://github.com/asiloisad/pulsar-open-external)] Show in folder: `Ctrl+F12`
@@ -98,13 +96,12 @@ The package supports additional options when opening a PDF. These options allow 
 
 ## LaTeX
 
-This package supports SyncTeX for `.tex` and `.pdf` files in both directions. To go from a `.tex` file to a `.pdf` file, use the `pdf-viewer:synctex` command from the command palette. To go from a `.pdf` file to a `.tex` file, right-click on the desired location in the PDF.
+This package integrates with [latex-tools](https://web.pulsar-edit.dev/packages/latex-tools) for SyncTeX support in both directions:
 
-For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF will take you to the corresponding source code. If the `synctex` command (part of modern TeX distributions) is in your PATH, this functionality will work out of the box. Otherwise, you can configure the path to the `synctex` binary in the package settings.
+- **Forward SyncTeX** (source → PDF): Use `latex-tools:synctex` (`Alt+F7`) from the editor.
+- **Backward SyncTeX** (PDF → source): Right-click on a location in the PDF.
 
-The viewer can remember the page before a refresh and set it as the initial page after the refresh.
-
-![latex-synctex](https://github.com/asiloisad/pulsar-pdf-viewer/blob/master/assets/latex-synctex.png?raw=true)
+For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF will take you to the corresponding source code. The `synctex` binary path can be configured in the latex-tools package settings.
 
 ## SOFiSTiK
 
