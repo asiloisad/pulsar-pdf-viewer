@@ -433,6 +433,14 @@ function refreshContents(data) {
 
 function scrollToPosition(data) {
   const pageView = PDFViewerApplication.pdfViewer.getPageView(data.page);
+  if (!pageView || !pageView.div) {
+    // Page not rendered yet, wait for pagesloaded event
+    PDFViewerApplication.eventBus.on("pagesloaded", function onPagesLoaded() {
+      PDFViewerApplication.eventBus.off("pagesloaded", onPagesLoaded);
+      scrollToPosition(data);
+    });
+    return;
+  }
   const clientHeight =
     PDFViewerApplication.appConfig.mainContainer.clientHeight;
   const clientWidth = PDFViewerApplication.appConfig.mainContainer.clientWidth;

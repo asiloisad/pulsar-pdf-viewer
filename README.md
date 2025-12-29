@@ -8,8 +8,8 @@ View PDF files directly in Pulsar. Based on Mozilla's PDF.js with theme integrat
 
 - **PDF.js integration**: Full-featured PDF viewing in editor panes.
 - **Theme support**: Adapts to Pulsar UI and syntax themes.
-- **Color inversion**: Dark mode for PDFs with `F8` toggle.
 - **Auto-reload**: Watches for file changes and refreshes.
+- **Color inversion**: Dark mode for PDFs with `F8` toggle or via [invert-colors](https://github.com/asiloisad/pulsar-invert-colors).
 - **SyncTeX**: Forward and backward search for LaTeX files via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
 - **Document outline**: Navigate via [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel).
 - **Scrollmap**: Shows outline markers via [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer).
