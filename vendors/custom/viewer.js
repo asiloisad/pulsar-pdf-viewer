@@ -5,8 +5,7 @@ const _console = {
   warn: console.warn,
   info: console.info,
 };
-console.log = console.info = console.warn = () => {};
-// console.error = () => { }; // Keep errors for now
+console.log = console.info = console.warn = console.error = () => {};
 
 // Polyfill for URL.parse (required by PDF.js v5)
 if (!URL.parse) {
