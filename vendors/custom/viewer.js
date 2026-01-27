@@ -49,8 +49,11 @@ function setupVisibilityObserver() {
 }
 
 window.onload = () => {
-  PDFViewerApplicationOptions.set("sidebarViewOnLoad", 0);
-  PDFViewerApplicationOptions.set("defaultZoomValue", "auto");
+  const sidebarConfig = parent.atom?.config?.get("pdf-viewer.defaultSidebar") || "none";
+  PDFViewerApplicationOptions.set("sidebarViewOnLoad",
+    { none: 0, thumbs: 1, outline: 2, attachments: 3 }[sidebarConfig] ?? 0);
+  PDFViewerApplicationOptions.set("defaultZoomValue",
+    parent.atom?.config?.get("pdf-viewer.defaultZoom") || "auto");
   PDFViewerApplicationOptions.set("enableScripting", false);
   PDFViewerApplicationOptions.set("externalLinkTarget", 4);
   PDFViewerApplicationOptions.set("isEvalSupported", false);
@@ -409,7 +412,7 @@ window.addEventListener("message", (message) => {
   }
 });
 
-let lastParams = { page: 1, zoom: "auto" };
+let lastParams = { page: 1, zoom: parent.atom?.config?.get("pdf-viewer.defaultZoom") || "auto" };
 
 function refreshContents(data) {
   if (window.frameElement && window.frameElement.style.display === "none") {

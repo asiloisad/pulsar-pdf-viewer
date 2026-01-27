@@ -65,8 +65,24 @@
       "type": "boolean",
       "default": false
     },
-    "debug": {
+    "defaultZoom": {
       "order": 5,
+      "title": "Default zoom",
+      "description": "The default zoom level when opening a PDF.",
+      "type": "string",
+      "default": "auto",
+      "enum": ["auto", "page-fit", "page-width", "page-actual", "50", "75", "100", "125", "150", "200"]
+    },
+    "defaultSidebar": {
+      "order": 6,
+      "title": "Default sidebar",
+      "description": "The default sidebar view when opening a PDF.",
+      "type": "string",
+      "default": "none",
+      "enum": ["none", "thumbs", "outline", "attachments"]
+    },
+    "debug": {
+      "order": 7,
       "title": "Debug",
       "description": "Show some errors in console.",
       "type": "boolean",
