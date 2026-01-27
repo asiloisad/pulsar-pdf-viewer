@@ -62,3 +62,8 @@
   background-color: var(--sidebar-narrow-bg-color);
   border-right: solid 1px var(--toolbar-border-color);
 }
+
+// Disable Chromium's default focus outline in PDF viewer
+#outerContainer :focus-visible {
+  outline: none !important;
+}
