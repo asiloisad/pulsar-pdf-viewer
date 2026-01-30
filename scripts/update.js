@@ -89,6 +89,23 @@ function patchViewerHtml(version) {
   console.log("Patched viewer.html with custom CSS/JS");
 }
 
+function patchViewerMjs(version) {
+  const viewerPath = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "web", "viewer.mjs");
+  let content = fs.readFileSync(viewerPath, "utf8");
+
+  // Disable printing by setting supportsPrinting to false
+  const pattern = /supportsPrinting:\s*\{\s*value:\s*true,/g;
+  if (pattern.test(content)) {
+    content = content.replace(pattern, "supportsPrinting: {\n    value: false,");
+    fs.writeFileSync(viewerPath, content);
+    console.log("Patched viewer.mjs: supportsPrinting set to false");
+  } else if (/supportsPrinting:\s*\{\s*value:\s*false,/.test(content)) {
+    console.log("viewer.mjs already patched: supportsPrinting is false");
+  } else {
+    console.warn("Warning: Could not find supportsPrinting pattern in viewer.mjs");
+  }
+}
+
 function extractZip(zipPath, destDir, version) {
   const targetDir = path.join(destDir, `pdfjs-${version}-dist`);
 
@@ -154,6 +171,9 @@ async function main() {
 
   // Patch viewer.html to include custom CSS/JS
   patchViewerHtml(version);
+
+  // Patch viewer.mjs to disable printing
+  patchViewerMjs(version);
 
   // Clean up zip
   fs.unlinkSync(zipPath);

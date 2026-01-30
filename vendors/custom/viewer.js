@@ -271,42 +271,15 @@ window.addEventListener(
       }
       return; // Other combos - do nothing
     }
-    // F6 - compile LaTeX
-    if (
-      event.keyCode === 117 &&
-      !event.ctrlKey &&
-      !event.altKey &&
-      !event.shiftKey
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      return parent.postMessage({
-        type: "keydown",
-        action: "pdf-viewer:compile",
-      });
-    }
-    // F7 - open associated .tex file
-    if (
-      event.keyCode === 118 &&
-      !event.ctrlKey &&
-      !event.altKey &&
-      !event.shiftKey
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      return parent.postMessage({
-        type: "keydown",
-        action: "pdf-viewer:open-tex",
-      });
-    }
     if (event.keyCode === 119) {
       return toggleInvertMode();
     } else if (event.ctrlKey && event.keyCode === 80) {
       // Ctrl+P
       event.preventDefault();
+      event.stopPropagation();
       return parent.postMessage({
         type: "keydown",
-        action: "fuzzy-finder:toggle-file-finder",
+        action: "fuzzy-files:toggle",
       });
     } else if (event.keyCode === 112) {
       return parent.postMessage({
@@ -318,6 +291,13 @@ window.addEventListener(
         type: "keydown",
         action: "navigation-panel:toggle",
       });
+    } else if (event.altKey && event.keyCode === 80) {
+      event.preventDefault();
+      event.stopPropagation();
+      return parent.postMessage({
+        type: "keydown",
+        action: "fuzzy-explorer:toggle",
+      });
     } else if (event.altKey && event.keyCode === 123) {
       return parent.postMessage({
         type: "keydown",
@@ -327,6 +307,12 @@ window.addEventListener(
       return parent.postMessage({
         type: "keydown",
         action: "open-external:show",
+      });
+    } else if (event.keyCode === 123 && !event.altKey && !event.ctrlKey) {
+      // F12 - compile
+      return parent.postMessage({
+        type: "keydown",
+        action: "pdf-viewer:compile",
       });
     } else if (event.altKey && event.keyCode === 121) {
       // return parent.postMessage({type:'keydown', action:'project-list:recent'})

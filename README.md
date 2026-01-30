@@ -11,8 +11,10 @@ View PDF files directly in Pulsar. Based on Mozilla's PDF.js with theme integrat
 - **Auto-reload**: Watches for file changes and refreshes.
 - **Color inversion**: Dark mode for PDFs with `F8` toggle or via [invert-colors](https://github.com/asiloisad/pulsar-invert-colors).
 - **SyncTeX**: Forward and backward search for LaTeX files via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
+- **LaTeX compile**: Compile source `.tex` file with `F12` via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
 - **Document outline**: Navigate via [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel).
 - **Scrollmap**: Shows outline markers via [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer).
+- **SOFiSTiK help**: Search keywords at current scope via [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools).
 
 ## Installation
 
@@ -27,8 +29,8 @@ Commands available in `atom-workspace`:
 
 Commands available in `.pdf-viewer`:
 
-- `pdf-viewer:compile`: (`F6`) compile the source `.tex` file using [latex-tools](https://github.com/asiloisad/pulsar-latex-tools),
-- `pdf-viewer:open-tex`: (`F7`) open the corresponding `.tex` file.
+- `pdf-viewer:compile`: (`F12`) compile the source `.tex` file using [latex-tools](https://github.com/asiloisad/pulsar-latex-tools),
+- `pdf-viewer:open-tex`: open the corresponding `.tex` file.
 
 ## Keyboard shortcuts
 
@@ -59,11 +61,11 @@ After showing the sidebar, click on the "Show document outline" button to displa
 
 Additional keyboard shortcuts have been introduced:
 
-- Open command palette: `Ctrl+Shift+P`, `F1`.
+- Open command palette: `F1`.
 - Refresh content for the current viewer: `F5`.
 - Toggle auto-refresh for the current viewer: `Ctrl+F5`.
-- Open corresponding `.tex` file: `F7`.
 - Invert colors for the current viewer: `F8`.
+- Compile source `.tex` file: `F12`.
 - Focus pane on left: `Alt+Left`
 - Focus pane above: `Alt+Up`
 - Focus pane on right: `Alt+Right`
@@ -71,7 +73,6 @@ Additional keyboard shortcuts have been introduced:
 
 Some keymap of external packages have been implemented:
 
-- [[latex-tools](https://github.com/asiloisad/pulsar-latex-tools)] Compile source `.tex` file: `F6`
 - [[latex-tools](https://github.com/asiloisad/pulsar-latex-tools)] Backward SyncTeX (go to `.tex` source): `Right-click`.
 - [[navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel)] Toggle panel: `Alt+N`
 - [[open-external](https://github.com/asiloisad/pulsar-open-external)] Open external: `Alt+F12`
@@ -79,6 +80,7 @@ Some keymap of external packages have been implemented:
 - [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle recent list: `Alt+F10`
 - [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle project list: `F10`
 - [[fuzzy-files](https://github.com/asiloisad/pulsar-fuzzy-files)] Toggle file list: `Ctrl+P`
+- [[fuzzy-explorer](https://github.com/asiloisad/pulsar-fuzzy-explorer)] Toggle explorer: `Alt+P`
 
 ## Style
 
