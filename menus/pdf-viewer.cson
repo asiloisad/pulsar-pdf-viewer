@@ -1,0 +1,14 @@
+'menu': [
+  {
+    label: 'Packages'
+    submenu: [
+      {
+        label: 'PDF Viewer'
+        submenu: [
+          { label: 'Reload All', command: 'pdf-viewer:reload-all' }
+          { label: 'Invert Mode', command: 'pdf-viewer:invert-mode' }
+        ]
+      }
+    ]
+  }
+]
