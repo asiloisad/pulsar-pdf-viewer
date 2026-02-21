@@ -1,11 +1,16 @@
 // supress output from pdfjs
-const _console = {
-  log: console.log,
-  error: console.error,
-  warn: console.warn,
-  info: console.info,
-};
 console.log = console.info = console.warn = console.error = () => {};
+
+// Polyfill for Promise.try (required by PDF.js v5.4.624+, unavailable in Chromium 124)
+if (typeof Promise.try !== "function") {
+  Promise.try = function (fn) {
+    var a = [];
+    for (var i = 1; i < arguments.length; i++) a.push(arguments[i]);
+    return new Promise(function (r) {
+      r(fn.apply(null, a));
+    });
+  };
+}
 
 // Polyfill for URL.parse (required by PDF.js v5)
 if (!URL.parse) {

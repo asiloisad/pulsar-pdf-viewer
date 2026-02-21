@@ -106,6 +106,26 @@ function patchViewerMjs(version) {
   }
 }
 
+function patchPolyfills(version) {
+  const importLine = 'import "../../custom/api-fix.js";\n';
+  const buildDir = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "build");
+  for (const file of ["pdf.mjs", "pdf.worker.mjs"]) {
+    const filePath = path.join(buildDir, file);
+    let content = fs.readFileSync(filePath, "utf8");
+    if (content.includes("custom/api-fix.js")) {
+      console.log(`${file} already imports api-fix.js`);
+      continue;
+    }
+    // Insert import after the license/version comment block
+    content = content.replace(
+      /^(\/\*\*[\s\S]*?\*\/\n)/,
+      "$1" + importLine
+    );
+    fs.writeFileSync(filePath, content);
+    console.log(`Patched ${file} with api-fix.js import`);
+  }
+}
+
 function extractZip(zipPath, destDir, version) {
   const targetDir = path.join(destDir, `pdfjs-${version}-dist`);
 
@@ -174,6 +194,9 @@ async function main() {
 
   // Patch viewer.mjs to disable printing
   patchViewerMjs(version);
+
+  // Patch pdf.mjs and pdf.worker.mjs with polyfills for Electron 30
+  patchPolyfills(version);
 
   // Clean up zip
   fs.unlinkSync(zipPath);

@@ -1,7 +1,7 @@
 {
   "name": "pdf-viewer",
   "description": "View PDF files directly in Pulsar",
-  "pdfjsVersion": "5.4.530",
+  "pdfjsVersion": "5.4.624",
   "repository": "https://github.com/asiloisad/pulsar-pdf-viewer",
   "keywords": [
     "pdf",
