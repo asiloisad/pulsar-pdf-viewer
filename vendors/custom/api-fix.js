@@ -1,6 +1,18 @@
 // Polyfills for APIs unavailable in Chromium 124 / Electron 30
 // Required by PDF.js v5.4.624+
 
+// Map.prototype.getOrInsertComputed (Chrome 133+)
+if (!Map.prototype.getOrInsertComputed) {
+  Map.prototype.getOrInsertComputed = function (key, callbackFn) {
+    if (this.has(key)) {
+      return this.get(key);
+    }
+    var value = callbackFn(key);
+    this.set(key, value);
+    return value;
+  };
+}
+
 // Promise.try (Chrome 128+)
 if (typeof Promise.try !== "function") {
   Promise.try = function (fn) {

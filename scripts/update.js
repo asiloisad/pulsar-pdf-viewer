@@ -106,6 +106,28 @@ function patchViewerMjs(version) {
   }
 }
 
+function patchFirstPagePromiseTDZ(version) {
+  const viewerPath = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "web", "viewer.mjs");
+  let content = fs.readFileSync(viewerPath, "utf8");
+
+  // Fix TDZ error: firstPagePromise is referenced in getDownloadInfo().then()
+  // before its const declaration. Move getDownloadInfo block after destructuring.
+  const tdzPattern =
+    /(pdfDocument\.getDownloadInfo\(\)\.then\(\(\{[\s\S]*?\}\);)\s*(const pageLayoutPromise[\s\S]*?const \{\s*firstPagePromise,\s*onePageRendered,\s*pagesPromise\s*\} = pdfViewer;)/;
+
+  if (tdzPattern.test(content)) {
+    content = content.replace(tdzPattern, (_, getDownloadBlock, restBlock) => {
+      return `${restBlock}\n    ${getDownloadBlock}`;
+    });
+    fs.writeFileSync(viewerPath, content);
+    console.log("Patched viewer.mjs: fixed firstPagePromise TDZ issue");
+  } else if (content.indexOf("const pageLayoutPromise") < content.indexOf("getDownloadInfo")) {
+    console.log("viewer.mjs already patched: firstPagePromise TDZ fix applied");
+  } else {
+    console.warn("Warning: Could not find firstPagePromise TDZ pattern in viewer.mjs");
+  }
+}
+
 function patchPolyfills(version) {
   const importLine = 'import "../../custom/api-fix.js";\n';
   const buildDir = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "build");
@@ -194,6 +216,9 @@ async function main() {
 
   // Patch viewer.mjs to disable printing
   patchViewerMjs(version);
+
+  // Patch viewer.mjs to fix firstPagePromise TDZ error in Electron 30
+  patchFirstPagePromiseTDZ(version);
 
   // Patch pdf.mjs and pdf.worker.mjs with polyfills for Electron 30
   patchPolyfills(version);
