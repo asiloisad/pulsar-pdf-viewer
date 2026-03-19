@@ -8,10 +8,11 @@ View PDF files directly in Pulsar. Based on Mozilla's PDF.js with theme integrat
 
 - **PDF.js integration**: Full-featured PDF viewing in editor panes.
 - **Theme support**: Adapts to Pulsar UI and syntax themes.
-- **Auto-reload**: Watches for file changes and refreshes.
+- **Auto-reload**: Watches for file changes and refreshes automatically.
 - **Color inversion**: Dark mode for PDFs with `F8` toggle or via [invert-colors](https://github.com/asiloisad/pulsar-invert-colors).
-- **SyncTeX**: Forward and backward search for LaTeX files via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
-- **LaTeX compile**: Compile source `.tex` file with `F12` via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
+- **LaTeX integration**: Compile `.tex` files and SyncTeX support via [latex-tools](https://github.com/asiloisad/pulsar-latex-tools).
+- **Typst integration**: Compile `.typ` files via [typst-tools](https://github.com/asiloisad/pulsar-typst-tools).
+- **Build coordination**: Pauses auto-refresh during builds and reloads on completion.
 - **Document outline**: Navigate via [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel).
 - **Scrollmap**: Shows outline markers via [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer).
 - **SOFiSTiK help**: Search keywords at current scope via [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools).
@@ -29,8 +30,8 @@ Commands available in `atom-workspace`:
 
 Commands available in `.pdf-viewer`:
 
-- `pdf-viewer:compile`: (`F12`) compile the source `.tex` file using [latex-tools](https://github.com/asiloisad/pulsar-latex-tools),
-- `pdf-viewer:open-tex`: open the corresponding `.tex` file.
+- `pdf-viewer:compile`: (`F12`) compile the source `.typ` or `.tex` file,
+- `pdf-viewer:open-tex`: open the corresponding `.typ` or `.tex` source file.
 
 ## Keyboard shortcuts
 
@@ -65,7 +66,7 @@ Additional keyboard shortcuts have been introduced:
 - Refresh content for the current viewer: `F5`.
 - Toggle auto-refresh for the current viewer: `Ctrl+F5`.
 - Invert colors for the current viewer: `F8`.
-- Compile source `.tex` file: `F12`.
+- Compile source file: `F12`.
 - Focus pane on left: `Alt+Left`
 - Focus pane above: `Alt+Up`
 - Focus pane on right: `Alt+Right`
@@ -98,16 +99,84 @@ The package supports additional options when opening a PDF. These options allow 
 
 ## LaTeX
 
-This package integrates with [latex-tools](https://web.pulsar-edit.dev/packages/latex-tools) for SyncTeX support in both directions:
+This package integrates with [latex-tools](https://web.pulsar-edit.dev/packages/latex-tools) for compilation and SyncTeX support:
 
+- **Compile**: Press `F12` in the PDF viewer to compile the corresponding `.tex` file.
 - **Forward SyncTeX** (source → PDF): Use `latex-tools:synctex` (`Alt+F7`) from the editor.
 - **Backward SyncTeX** (PDF → source): Right-click on a location in the PDF.
+- **Build coordination**: Auto-refresh pauses during compilation and resumes when the build finishes.
 
 For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF will take you to the corresponding source code. The `synctex` binary path can be configured in the latex-tools package settings.
+
+## Typst
+
+This package integrates with [typst-tools](https://web.pulsar-edit.dev/packages/typst-tools) for compilation:
+
+- **Compile**: Press `F12` in the PDF viewer to compile the corresponding `.typ` file.
+- **Open source**: Use `pdf-viewer:open-tex` to open the `.typ` source file.
+- **Build coordination**: Auto-refresh pauses during compilation and resumes when the build finishes.
+
+When both `.typ` and `.tex` source files exist, the Typst source takes priority.
 
 ## SOFiSTiK
 
 This package is adapted to support `sofistik-tools` for help functions using search keywords at the current scope. For more information, see the [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools) package.
+
+## Provided Service `pdf-viewer`
+
+Allows other packages to manage PDF viewers programmatically. Open PDFs, observe viewer instances, scroll to destinations, and update viewer files.
+
+In your `package.json`:
+
+```json
+{
+  "consumedServices": {
+    "pdf-viewer": {
+      "versions": {
+        "1.0.0": "consumePdfViewer"
+      }
+    }
+  }
+}
+```
+
+In your main module:
+
+```javascript
+consumePdfViewer(service) {
+  // Observe all viewers (existing and new)
+  this.subscriptions.add(
+    service.observeViewers((viewer) => {
+      console.log(`Viewer opened: ${viewer.filePath}`);
+    })
+  );
+
+  // Open a PDF in a split pane
+  service.open('/path/to/file.pdf', {
+    split: 'right',
+    dest: 'chapter1',
+    activatePane: false,
+  });
+
+  // Find a viewer by file path
+  const viewer = service.getViewerByPath('/path/to/file.pdf');
+
+  // Scroll to a named destination
+  service.scrollToDestination(viewer, 'section2');
+}
+```
+
+### Methods
+
+| Method | Description |
+| --- | --- |
+| `getViewers()` | Returns the `Set` of all active viewer instances. |
+| `observeViewers(callback)` | Calls callback for existing and future viewers. Returns a `Disposable`. |
+| `getViewerByPath(filePath)` | Finds a viewer by PDF file path. Returns `Viewer` or `null`. |
+| `getViewerByTag(tag)` | Finds a viewer whose hash contains the given tag. Returns `Viewer` or `null`. |
+| `open(filePath, options?)` | Opens a PDF. Options: `split`, `dest`, `tag`, `activatePane`. Returns `Promise<Viewer>`. |
+| `scrollToDestination(viewer, dest)` | Scrolls an existing viewer to a named destination. |
+| `setFile(viewer, filePath, dest?, tag?)` | Updates a viewer to show a different PDF file. |
 
 ## Contributing
 

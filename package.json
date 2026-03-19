@@ -34,6 +34,11 @@
       "versions": {
         "1.0.0": "consumeLatexTools"
       }
+    },
+    "typst-tools": {
+      "versions": {
+        "1.0.0": "consumeTypstTools"
+      }
     }
   },
   "configSchema": {
