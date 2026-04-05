@@ -92,17 +92,35 @@ function patchViewerHtml(version) {
 function patchViewerMjs(version) {
   const viewerPath = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "web", "viewer.mjs");
   let content = fs.readFileSync(viewerPath, "utf8");
+  let changed = false;
 
   // Disable printing by setting supportsPrinting to false
-  const pattern = /supportsPrinting:\s*\{\s*value:\s*true,/g;
-  if (pattern.test(content)) {
-    content = content.replace(pattern, "supportsPrinting: {\n    value: false,");
-    fs.writeFileSync(viewerPath, content);
+  const printPattern = /supportsPrinting:\s*\{\s*value:\s*true,/g;
+  if (printPattern.test(content)) {
+    content = content.replace(printPattern, "supportsPrinting: {\n    value: false,");
+    changed = true;
     console.log("Patched viewer.mjs: supportsPrinting set to false");
   } else if (/supportsPrinting:\s*\{\s*value:\s*false,/.test(content)) {
     console.log("viewer.mjs already patched: supportsPrinting is false");
   } else {
     console.warn("Warning: Could not find supportsPrinting pattern in viewer.mjs");
+  }
+
+  // Suppress textLayer focus after destination navigation to prevent keyboard focus
+  // steal when the viewer is opened without activating its pane (activatePane=false).
+  const focusPattern = /(\bif \(evt\.pageNumber === pageNumber\) \{\n\s*)evt\.source\.textLayer\.div\.focus\(\);/;
+  if (focusPattern.test(content)) {
+    content = content.replace(focusPattern, "$1// evt.source.textLayer.div.focus();");
+    changed = true;
+    console.log("Patched viewer.mjs: suppressed textLayer focus after destination navigation");
+  } else if (content.includes("// evt.source.textLayer.div.focus();")) {
+    console.log("viewer.mjs already patched: textLayer focus suppressed");
+  } else {
+    console.warn("Warning: Could not find textLayer focus pattern in viewer.mjs");
+  }
+
+  if (changed) {
+    fs.writeFileSync(viewerPath, content);
   }
 }
 
