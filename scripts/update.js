@@ -4,6 +4,7 @@ const path = require("path");
 const { execSync } = require("child_process");
 
 const VENDORS_DIR = path.join(__dirname, "..", "vendors");
+const PDFJS_DIR = path.join(VENDORS_DIR, "pdfjs-dist");
 const PACKAGE_JSON = path.join(__dirname, "..", "package.json");
 const GITHUB_API = "https://api.github.com/repos/mozilla/pdf.js/releases/latest";
 
@@ -49,19 +50,8 @@ function downloadFile(url, dest) {
   });
 }
 
-function removeOldVersions(currentVersion) {
-  const dirs = fs.readdirSync(VENDORS_DIR).filter((d) => {
-    return d.startsWith("pdfjs-") && d.endsWith("-dist") && d !== `pdfjs-${currentVersion}-dist`;
-  });
-  for (const dir of dirs) {
-    const dirPath = path.join(VENDORS_DIR, dir);
-    console.log(`Removing old version: ${dir}`);
-    fs.rmSync(dirPath, { recursive: true, force: true });
-  }
-}
-
-function patchViewerHtml(version) {
-  const viewerPath = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "web", "viewer.html");
+function patchViewerHtml() {
+  const viewerPath = path.join(PDFJS_DIR, "web", "viewer.html");
   let html = fs.readFileSync(viewerPath, "utf8");
 
   // Check if already patched
@@ -89,8 +79,8 @@ function patchViewerHtml(version) {
   console.log("Patched viewer.html with custom CSS/JS");
 }
 
-function patchViewerMjs(version) {
-  const viewerPath = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "web", "viewer.mjs");
+function patchViewerMjs() {
+  const viewerPath = path.join(PDFJS_DIR, "web", "viewer.mjs");
   let content = fs.readFileSync(viewerPath, "utf8");
   let changed = false;
 
@@ -124,8 +114,8 @@ function patchViewerMjs(version) {
   }
 }
 
-function patchFirstPagePromiseTDZ(version) {
-  const viewerPath = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "web", "viewer.mjs");
+function patchFirstPagePromiseTDZ() {
+  const viewerPath = path.join(PDFJS_DIR, "web", "viewer.mjs");
   let content = fs.readFileSync(viewerPath, "utf8");
 
   // Fix TDZ error: firstPagePromise is referenced in getDownloadInfo().then()
@@ -146,9 +136,9 @@ function patchFirstPagePromiseTDZ(version) {
   }
 }
 
-function patchPolyfills(version) {
+function patchPolyfills() {
   const importLine = 'import "../../custom/api-fix.js";\n';
-  const buildDir = path.join(VENDORS_DIR, `pdfjs-${version}-dist`, "build");
+  const buildDir = path.join(PDFJS_DIR, "build");
   for (const file of ["pdf.mjs", "pdf.worker.mjs"]) {
     const filePath = path.join(buildDir, file);
     let content = fs.readFileSync(filePath, "utf8");
@@ -166,21 +156,19 @@ function patchPolyfills(version) {
   }
 }
 
-function extractZip(zipPath, destDir, version) {
-  const targetDir = path.join(destDir, `pdfjs-${version}-dist`);
-
-  // Create target directory
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
+function extractZip(zipPath) {
+  if (fs.existsSync(PDFJS_DIR)) {
+    fs.rmSync(PDFJS_DIR, { recursive: true, force: true });
   }
+  fs.mkdirSync(PDFJS_DIR, { recursive: true });
 
   if (process.platform === "win32") {
     execSync(
-      `powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${targetDir}' -Force"`,
+      `powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${PDFJS_DIR}' -Force"`,
       { stdio: "inherit" }
     );
   } else {
-    execSync(`unzip -o -q "${zipPath}" -d "${targetDir}"`, { stdio: "inherit" });
+    execSync(`unzip -o -q "${zipPath}" -d "${PDFJS_DIR}"`, { stdio: "inherit" });
   }
 }
 
@@ -222,24 +210,21 @@ async function main() {
   await downloadFile(asset.browser_download_url, zipPath);
   console.log("Download complete.");
 
-  // Remove old versions
-  removeOldVersions(version);
-
   // Extract
   console.log("Extracting...");
-  extractZip(zipPath, VENDORS_DIR, version);
+  extractZip(zipPath);
 
   // Patch viewer.html to include custom CSS/JS
-  patchViewerHtml(version);
+  patchViewerHtml();
 
   // Patch viewer.mjs to disable printing
-  patchViewerMjs(version);
+  patchViewerMjs();
 
   // Patch viewer.mjs to fix firstPagePromise TDZ error in Electron 30
-  patchFirstPagePromiseTDZ(version);
+  patchFirstPagePromiseTDZ();
 
   // Patch pdf.mjs and pdf.worker.mjs with polyfills for Electron 30
-  patchPolyfills(version);
+  patchPolyfills();
 
   // Clean up zip
   fs.unlinkSync(zipPath);
