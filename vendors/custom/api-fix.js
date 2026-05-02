@@ -51,3 +51,10 @@ if (!Uint8Array.fromBase64) {
     return a;
   };
 }
+
+// Math.sumPrecise (Chrome 137+) — removed from PDF.js internal polyfill in v5.7
+if (typeof Math.sumPrecise !== "function") {
+  Math.sumPrecise = function (numbers) {
+    return numbers.reduce(function (a, b) { return a + b; }, 0);
+  };
+}
