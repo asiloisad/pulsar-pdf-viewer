@@ -27,6 +27,11 @@
       "versions": {
         "1.0.0": "provideViewer"
       }
+    },
+    "navigation-adapter": {
+      "versions": {
+        "1.0.0": "provideNavigationAdapter"
+      }
     }
   },
   "consumedServices": {
@@ -106,6 +111,13 @@
       "order": 7,
       "title": "Debug",
       "description": "Show some errors in console.",
+      "type": "boolean",
+      "default": false
+    },
+    "snoFilter": {
+      "order": 8,
+      "title": "Filter section numbers",
+      "description": "Remove leading section numbers from PDF outline entries in navigation-panel.",
       "type": "boolean",
       "default": false
     }

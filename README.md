@@ -91,7 +91,7 @@ The style of the documents has been adapted to match the theme in Pulsar. As the
 
 ## Document outline
 
-The viewer supports the [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel) package. You can search through the document using the all-in outline tree instead of the PDFjs outline.
+The viewer supports the [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel) package via the `navigation-adapter` service. You can search through the document using the all-in outline tree instead of the PDFjs outline. Scroll position is tracked and the active section is highlighted in the panel.
 
 ## URI options
 
@@ -166,17 +166,23 @@ consumePdfViewer(service) {
 }
 ```
 
-### Methods
+## Provided Service `navigation-adapter`
 
-| Method | Description |
-| --- | --- |
-| `getViewers()` | Returns the `Set` of all active viewer instances. |
-| `observeViewers(callback)` | Calls callback for existing and future viewers. Returns a `Disposable`. |
-| `getViewerByPath(filePath)` | Finds a viewer by PDF file path. Returns `Viewer` or `null`. |
-| `getViewerByTag(tag)` | Finds a viewer whose hash contains the given tag. Returns `Viewer` or `null`. |
-| `open(filePath, options?)` | Opens a PDF. Options: `split`, `dest`, `tag`, `activatePane`. Returns `Promise<Viewer>`. |
-| `scrollToDestination(viewer, dest)` | Scrolls an existing viewer to a named destination. |
-| `setFile(viewer, filePath, dest?, tag?)` | Updates a viewer to show a different PDF file. |
+Exposes the PDF document outline to [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel). Registers automatically when both packages are installed.
+
+In your `package.json`:
+
+```json
+{
+  "consumedServices": {
+    "navigation-adapter": {
+      "versions": {
+        "1.0.0": "consumeNavigationAdapter"
+      }
+    }
+  }
+}
+```
 
 ## Contributing
 

@@ -10,41 +10,45 @@ const GITHUB_API = "https://api.github.com/repos/mozilla/pdf.js/releases/latest"
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { "User-Agent": "pdf-viewer-updater" } }, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(new Error(`Failed to parse JSON: ${e.message}`));
-        }
-      });
-    }).on("error", reject);
+    https
+      .get(url, { headers: { "User-Agent": "pdf-viewer-updater" } }, (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error(`Failed to parse JSON: ${e.message}`));
+          }
+        });
+      })
+      .on("error", reject);
   });
 }
 
 function downloadFile(url, dest) {
   return new Promise((resolve, reject) => {
     const follow = (url) => {
-      https.get(url, { headers: { "User-Agent": "pdf-viewer-updater" } }, (res) => {
-        if (res.statusCode === 302 || res.statusCode === 301) {
-          return follow(res.headers.location);
-        }
-        if (res.statusCode !== 200) {
-          return reject(new Error(`Download failed with status ${res.statusCode}`));
-        }
-        const file = fs.createWriteStream(dest);
-        res.pipe(file);
-        file.on("finish", () => {
-          file.close();
-          resolve();
-        });
-        file.on("error", (err) => {
-          fs.unlink(dest, () => {});
-          reject(err);
-        });
-      }).on("error", reject);
+      https
+        .get(url, { headers: { "User-Agent": "pdf-viewer-updater" } }, (res) => {
+          if (res.statusCode === 302 || res.statusCode === 301) {
+            return follow(res.headers.location);
+          }
+          if (res.statusCode !== 200) {
+            return reject(new Error(`Download failed with status ${res.statusCode}`));
+          }
+          const file = fs.createWriteStream(dest);
+          res.pipe(file);
+          file.on("finish", () => {
+            file.close();
+            resolve();
+          });
+          file.on("error", (err) => {
+            fs.unlink(dest, () => {});
+            reject(err);
+          });
+        })
+        .on("error", reject);
     };
     follow(url);
   });
@@ -64,15 +68,15 @@ function patchViewerHtml() {
   html = html.replace(
     '<link rel="stylesheet" href="viewer.css" />',
     '<link rel="stylesheet" href="viewer.css" />\n' +
-    '    <link rel="stylesheet" href="../../custom/viewer.css">\n' +
-    '    <style id="viewer-less"></style>'
+      '    <link rel="stylesheet" href="../../custom/viewer.css">\n' +
+      '    <style id="viewer-less"></style>',
   );
 
   // Add custom JS after viewer.mjs (before </head>)
   html = html.replace(
     '<script src="viewer.mjs" type="module"></script>\n  </head>',
     '<script src="viewer.mjs" type="module"></script>\n' +
-    '    <script src="../../custom/viewer.js"></script>\n  </head>'
+      '    <script src="../../custom/viewer.js"></script>\n  </head>',
   );
 
   fs.writeFileSync(viewerPath, html);
@@ -98,7 +102,8 @@ function patchViewerMjs() {
 
   // Suppress textLayer focus after destination navigation to prevent keyboard focus
   // steal when the viewer is opened without activating its pane (activatePane=false).
-  const focusPattern = /(\bif \(evt\.pageNumber === pageNumber\) \{\n\s*)evt\.source\.textLayer\.div\.focus\(\);/;
+  const focusPattern =
+    /(\bif \(evt\.pageNumber === pageNumber\) \{\n\s*)evt\.source\.textLayer\.div\.focus\(\);/;
   if (focusPattern.test(content)) {
     content = content.replace(focusPattern, "$1// evt.source.textLayer.div.focus();");
     changed = true;
@@ -147,10 +152,7 @@ function patchPolyfills() {
       continue;
     }
     // Insert import after the license/version comment block
-    content = content.replace(
-      /^(\/\*\*[\s\S]*?\*\/\n)/,
-      "$1" + importLine
-    );
+    content = content.replace(/^(\/\*\*[\s\S]*?\*\/\n)/, "$1" + importLine);
     fs.writeFileSync(filePath, content);
     console.log(`Patched ${file} with api-fix.js import`);
   }
@@ -165,7 +167,7 @@ function extractZip(zipPath) {
   if (process.platform === "win32") {
     execSync(
       `powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${PDFJS_DIR}' -Force"`,
-      { stdio: "inherit" }
+      { stdio: "inherit" },
     );
   } else {
     execSync(`unzip -o -q "${zipPath}" -d "${PDFJS_DIR}"`, { stdio: "inherit" });
@@ -175,9 +177,7 @@ function extractZip(zipPath) {
 async function main() {
   const args = process.argv.slice(2);
   const forceUpdate =
-    args.includes("--force") ||
-    args.includes("-f") ||
-    process.env.npm_config_force === "true";
+    args.includes("--force") || args.includes("-f") || process.env.npm_config_force === "true";
 
   console.log("Fetching latest PDF.js release...");
   const release = await fetchJSON(GITHUB_API);

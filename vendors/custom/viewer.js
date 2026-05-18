@@ -203,9 +203,9 @@ async function spawnCurrentDest() {
       }
     }
 
-    // Send current outline item(s) if any are visible
+    // Send outline item(s) visible in the viewport.
     parent.postMessage({
-      type: "currentOutlineItem",
+      type: "visibleOutlineItems",
       destHash: visibleHashes,
     });
 
