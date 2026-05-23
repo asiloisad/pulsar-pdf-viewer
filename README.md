@@ -26,62 +26,39 @@ To install `pdf-viewer` search for [pdf-viewer](https://web.pulsar-edit.dev/pack
 Commands available in `atom-workspace`:
 
 - `pdf-viewer:reload-all`: reload all open PDF viewers,
-- `pdf-viewer:invert-mode`: <kbd>F8</kbd> toggle color inversion for all viewers.
+- `pdf-viewer:invert-mode`: toggle color inversion for all viewers.
 
 Commands available in `.pdf-viewer`:
 
+- `pdf-viewer:refresh`: <kbd>F5</kbd> refresh content for the current viewer,
+- `pdf-viewer:toggle-refreshing`: <kbd>Ctrl+F5</kbd> toggle auto-refresh for the current viewer,
+- `pdf-viewer:invert-current`: <kbd>F8</kbd> invert colors for the current viewer,
 - `pdf-viewer:compile`: <kbd>F12</kbd> compile the source `.typ` or `.tex` file,
-- `pdf-viewer:open-tex`: open the corresponding `.typ` or `.tex` source file.
-
-## Keyboard shortcuts
-
-The keyboard shortcuts within the PDF.js viewer remain unchanged and cannot be modified from within Pulsar. For more information, refer to the [default keymap](https://github.com/mozilla/pdf.js/wiki/Frequently-Asked-Questions#faq-shortcuts):
-
-- The <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PageUp</kbd>, <kbd>PageDown</kbd>, and arrow keys can be used to navigate the document.
-- Next page: <kbd>N</kbd>, <kbd>J</kbd>, <kbd>Space</kbd> (presentation mode only), <kbd>Enter</kbd> (presentation mode only), or <kbd>LeftClick</kbd> (presentation mode only).
-- Previous page: <kbd>P</kbd>, <kbd>K</kbd>, <kbd>Shift+Space</kbd> (presentation mode only), <kbd>Shift+Enter</kbd> (presentation mode only) or <kbd>Shift+LeftClick</kbd> (presentation mode only).
-- User interface buttons or <kbd>Ctrl+MouseWheel</kbd> can be used to change the zoom level.
-- Zoom in: <kbd>Ctrl++</kbd>, <kbd>Ctrl+=</kbd>.
-- Zoom out: <kbd>Ctrl+-</kbd>.
-- Restore normal zoom: <kbd>Ctrl+0</kbd>.
-- Rotate the document clockwise: <kbd>R</kbd>.
-- Rotate the document counterclockwise: <kbd>Shift+R</kbd>.
-- Activate presentation mode: <kbd>Ctrl+Alt+P</kbd>.
-- Enable the hand tool: <kbd>H</kbd>.
-- Enable the text selection tool: <kbd>S</kbd>.
-- Move focus to the 'go to page' box: <kbd>Ctrl+Alt+G</kbd>.
-- Find text in the document: <kbd>Ctrl+F</kbd>.
-- Find the next occurrence of text in the document: <kbd>Ctrl+G</kbd>.
-- Find the previous occurrence of text in the document: <kbd>Ctrl+Shift+G</kbd>.
-- Print the document: unset.
-- Download the document: <kbd>Ctrl+S</kbd>.
-- Open a file: <kbd>Ctrl+O</kbd>.
-- Use <kbd>F4</kbd> to toggle the visibility of the sidebar.
-
-After showing the sidebar, click on the "Show document outline" button to display the document outline (if the PDF file has one). Nested outline items can be expanded/collapsed by clicking on the triangles to the left of an item. To expand/collapse all items under the selected item, press <kbd>Shift</kbd> while clicking on the triangle. Double-click on the "Show document outline" button to expand/collapse all outline items.
-
-Additional keyboard shortcuts have been introduced:
-
-- Open command palette: <kbd>F1</kbd>.
-- Refresh content for the current viewer: <kbd>F5</kbd>.
-- Toggle auto-refresh for the current viewer: <kbd>Ctrl+F5</kbd>.
-- Invert colors for the current viewer: <kbd>F8</kbd>.
-- Compile source file: <kbd>F12</kbd>.
-- Focus pane on left: <kbd>Alt+Left</kbd>
-- Focus pane above: <kbd>Alt+Up</kbd>
-- Focus pane on right: <kbd>Alt+Right</kbd>
-- Focus pane below: <kbd>Alt+Down</kbd>
-
-Some keymap of external packages have been implemented:
-
-- [[latex-tools](https://github.com/asiloisad/pulsar-latex-tools)] Backward SyncTeX (go to `.tex` source): <kbd>RightClick</kbd>.
-- [[navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel)] Toggle panel: <kbd>Alt+N</kbd>
-- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Open external: <kbd>Alt+F12</kbd>
-- [[open-external](https://github.com/asiloisad/pulsar-open-external)] Show in folder: <kbd>Ctrl+F12</kbd>
-- [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle recent list: <kbd>Alt+F10</kbd>
-- [[project-list](https://github.com/asiloisad/pulsar-project-list)] Toggle project list: <kbd>F10</kbd>
-- [[fuzzy-files](https://github.com/asiloisad/pulsar-fuzzy-files)] Toggle file list: <kbd>Ctrl+P</kbd>
-- [[fuzzy-explorer](https://github.com/asiloisad/pulsar-fuzzy-explorer)] Toggle explorer: <kbd>Alt+P</kbd>
+- `pdf-viewer:open-tex`: open the corresponding `.typ` or `.tex` source file,
+- `pdf-viewer:next-page`: go to the next page,
+- `pdf-viewer:previous-page`: go to the previous page,
+- `pdf-viewer:first-page`: go to the first page,
+- `pdf-viewer:last-page`: go to the last page,
+- `pdf-viewer:scroll-up`: scroll up,
+- `pdf-viewer:scroll-down`: scroll down,
+- `pdf-viewer:scroll-left`: scroll left,
+- `pdf-viewer:scroll-right`: scroll right,
+- `pdf-viewer:page-up`: scroll up by one viewport,
+- `pdf-viewer:page-down`: scroll down by one viewport,
+- `pdf-viewer:zoom-in`: zoom in,
+- `pdf-viewer:zoom-out`: zoom out,
+- `pdf-viewer:zoom-reset`: reset zoom,
+- `pdf-viewer:rotate-clockwise`: rotate clockwise,
+- `pdf-viewer:rotate-counterclockwise`: rotate counterclockwise,
+- `pdf-viewer:select-tool`: enable the text selection tool,
+- `pdf-viewer:hand-tool`: enable the hand tool,
+- `pdf-viewer:find`: open find,
+- `pdf-viewer:find-next`: find next match,
+- `pdf-viewer:find-previous`: find previous match,
+- `pdf-viewer:toggle-sidebar`: toggle the PDF sidebar,
+- `pdf-viewer:presentation-mode`: enter presentation mode,
+- `pdf-viewer:download`: download the PDF,
+- `pdf-viewer:print`: print the PDF.
 
 ## Style
 

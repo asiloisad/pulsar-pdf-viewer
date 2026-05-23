@@ -256,97 +256,26 @@ window.addEventListener(
 window.addEventListener(
   "keydown",
   (event) => {
-    // Handle F5 variants first with explicit modifier checks
-    if (event.keyCode === 116) {
-      // F5
-      event.preventDefault();
-      event.stopPropagation();
-      if (event.ctrlKey && (event.altKey || event.shiftKey)) {
-        // Ctrl+Alt+F5 or Ctrl+Shift+F5 - window reload
-        return parent.postMessage({ type: "keydown", action: "window:reload" });
-      } else if (event.ctrlKey) {
-        // Ctrl+F5 - toggle auto-refresh
-        return parent.postMessage({
-          type: "keydown",
-          action: "toggle-refreshing",
-        });
-      } else if (!event.altKey && !event.shiftKey) {
-        // F5 - refresh PDF
-        return refreshContents({ filePath: PDFViewerApplication.url });
-      }
-      return; // Other combos - do nothing
+    if (isEditableTarget(event) && !event.ctrlKey && !event.altKey && !event.metaKey) {
+      return;
     }
-    if (event.keyCode === 119) {
-      return toggleInvertMode();
-    } else if (event.ctrlKey && event.keyCode === 80) {
-      // Ctrl+P
-      event.preventDefault();
-      event.stopPropagation();
-      return parent.postMessage({
-        type: "keydown",
-        action: "fuzzy-files:toggle",
-      });
-    } else if (event.keyCode === 112) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "command-palette:toggle",
-      });
-    } else if (event.altKey && event.keyCode === 78) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "navigation-panel:toggle",
-      });
-    } else if (event.altKey && event.keyCode === 80) {
-      event.preventDefault();
-      event.stopPropagation();
-      return parent.postMessage({
-        type: "keydown",
-        action: "fuzzy-explorer:toggle",
-      });
-    } else if (event.altKey && event.keyCode === 123) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "open-external:open",
-      });
-    } else if (event.ctrlKey && event.keyCode === 123) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "open-external:show",
-      });
-    } else if (event.keyCode === 123 && !event.altKey && !event.ctrlKey) {
-      // F12 - compile
-      return parent.postMessage({
-        type: "keydown",
-        action: "pdf-viewer:compile",
-      });
-    } else if (event.altKey && event.keyCode === 121) {
-      // return parent.postMessage({type:'keydown', action:'project-list:recent'})
-    } else if (event.keyCode === 121) {
-      // return parent.postMessage({type:'keydown', action:'project-list:toggle'})
-    } else if (event.altKey && event.keyCode === 37) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "window:focus-pane-on-left",
-      });
-    } else if (event.altKey && event.keyCode === 38) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "window:focus-pane-above",
-      });
-    } else if (event.altKey && event.keyCode === 39) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "window:focus-pane-on-right",
-      });
-    } else if (event.altKey && event.keyCode === 40) {
-      return parent.postMessage({
-        type: "keydown",
-        action: "window:focus-pane-below",
-      });
+
+    const handled = window.frameElement?.pdfViewerRedispatchKeyboardEvent?.(event);
+    if (!handled) {
+      return;
     }
+
+    event.preventDefault();
+    event.stopPropagation();
   },
   true
 );
+
+function isEditableTarget(event) {
+  const target = event.target;
+  if (!target) return false;
+  return !!target.closest?.("input, textarea, select, [contenteditable=''], [contenteditable='true']");
+}
 
 window.addEventListener(
   "contextmenu",
@@ -400,6 +329,8 @@ window.addEventListener("message", (message) => {
     return toggleInvertMode(message.data);
   } else if (message.data.type === "currentdest") {
     return spawnCurrentDest(message.data);
+  } else if (message.data.type === "command") {
+    return runViewerCommand(message.data.command);
   }
 });
 
@@ -453,6 +384,79 @@ function scrollToPosition(data) {
 
 function scrollToDestination(data) {
   PDFViewerApplication.pdfLinkService.goToDestination(data.dest);
+}
+
+function runViewerCommand(command) {
+  const app = PDFViewerApplication;
+  const eventBus = app.eventBus;
+  const pdfViewer = app.pdfViewer;
+  const container = pdfViewer?.container || app.appConfig?.mainContainer;
+  const line = 48;
+  const pageY = container ? Math.max(1, container.clientHeight * 0.9) : 600;
+
+  switch (command) {
+    case "next-page":
+      return eventBus.dispatch("nextpage", { source: window });
+    case "previous-page":
+      return eventBus.dispatch("previouspage", { source: window });
+    case "first-page":
+      return eventBus.dispatch("firstpage", { source: window });
+    case "last-page":
+      return eventBus.dispatch("lastpage", { source: window });
+    case "scroll-up":
+      return container?.scrollBy({ top: -line, left: 0 });
+    case "scroll-down":
+      return container?.scrollBy({ top: line, left: 0 });
+    case "scroll-left":
+      return container?.scrollBy({ top: 0, left: -line });
+    case "scroll-right":
+      return container?.scrollBy({ top: 0, left: line });
+    case "page-up":
+      return container?.scrollBy({ top: -pageY, left: 0 });
+    case "page-down":
+      return container?.scrollBy({ top: pageY, left: 0 });
+    case "zoom-in":
+      return eventBus.dispatch("zoomin", { source: window });
+    case "zoom-out":
+      return eventBus.dispatch("zoomout", { source: window });
+    case "zoom-reset":
+      return eventBus.dispatch("zoomreset", { source: window });
+    case "rotate-clockwise":
+      return eventBus.dispatch("rotatecw", { source: window });
+    case "rotate-counterclockwise":
+      return eventBus.dispatch("rotateccw", { source: window });
+    case "select-tool":
+      return eventBus.dispatch("switchcursortool", { source: window, tool: 0 });
+    case "hand-tool":
+      return eventBus.dispatch("switchcursortool", { source: window, tool: 1 });
+    case "find":
+      return app.findBar?.open();
+    case "find-next":
+      return findAgain(false);
+    case "find-previous":
+      return findAgain(true);
+    case "toggle-sidebar":
+      return app.viewsManager?.toggle();
+    case "presentation-mode":
+      return app.requestPresentationMode();
+    case "download":
+      return eventBus.dispatch("download", { source: window });
+    case "print":
+      return eventBus.dispatch("print", { source: window });
+  }
+}
+
+function findAgain(findPrevious) {
+  const state = PDFViewerApplication.findController?.state;
+  if (!state) {
+    return PDFViewerApplication.findBar?.open();
+  }
+  PDFViewerApplication.eventBus.dispatch("find", {
+    ...state,
+    source: window,
+    type: "again",
+    findPrevious,
+  });
 }
 
 let stateInvertMode;
