@@ -107,17 +107,17 @@
         "attachments"
       ]
     },
-    "debug": {
+    "snoFilter": {
       "order": 7,
-      "title": "Debug",
-      "description": "Show some errors in console.",
+      "title": "Filter section numbers",
+      "description": "Remove leading section numbers from PDF outline entries in navigation-panel.",
       "type": "boolean",
       "default": false
     },
-    "snoFilter": {
+    "debug": {
       "order": 8,
-      "title": "Filter section numbers",
-      "description": "Remove leading section numbers from PDF outline entries in navigation-panel.",
+      "title": "Debug",
+      "description": "Show some errors in console.",
       "type": "boolean",
       "default": false
     }
