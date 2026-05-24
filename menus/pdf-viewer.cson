@@ -43,6 +43,8 @@
               { type: 'separator' }
               { label: 'Text Selection Tool', command: 'pdf-viewer:select-tool' }
               { label: 'Hand Tool', command: 'pdf-viewer:hand-tool' }
+              { type: 'separator' }
+              { label: 'Copy Selection', command: 'pdf-viewer:copy' }
             ]
           }
           { type: 'separator' }

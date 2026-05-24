@@ -443,6 +443,20 @@ function runViewerCommand(command) {
       return eventBus.dispatch("download", { source: window });
     case "print":
       return eventBus.dispatch("print", { source: window });
+    case "copy":
+      return copySelection();
+  }
+}
+
+function copySelection() {
+  const text = window.getSelection()?.toString();
+  if (!text) {
+    return;
+  }
+  try {
+    document.execCommand("copy");
+  } catch (e) {
+    parent.navigator?.clipboard?.writeText(text);
   }
 }
 

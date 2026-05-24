@@ -33,3 +33,4 @@
   'f4': 'pdf-viewer:toggle-sidebar'
   'cmdorctrl-alt-p': 'pdf-viewer:presentation-mode'
   'cmdorctrl-s': 'pdf-viewer:download'
+  'cmdorctrl-c': 'pdf-viewer:copy'

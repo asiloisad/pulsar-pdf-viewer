@@ -55,6 +55,7 @@ Commands available in `.pdf-viewer`:
 - `pdf-viewer:find`: open find,
 - `pdf-viewer:find-next`: find next match,
 - `pdf-viewer:find-previous`: find previous match,
+- `pdf-viewer:copy`: <kbd>Ctrl+C</kbd> copy the selected text to the clipboard,
 - `pdf-viewer:toggle-sidebar`: toggle the PDF sidebar,
 - `pdf-viewer:presentation-mode`: enter presentation mode,
 - `pdf-viewer:download`: download the PDF,
