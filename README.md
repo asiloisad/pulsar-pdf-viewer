@@ -30,10 +30,10 @@ Commands available in `atom-workspace`:
 
 Commands available in `.pdf-viewer`:
 
-- `pdf-viewer:refresh`: <kbd>F5</kbd> refresh content for the current viewer,
-- `pdf-viewer:toggle-refreshing`: <kbd>Ctrl+F5</kbd> toggle auto-refresh for the current viewer,
-- `pdf-viewer:invert-current`: <kbd>F8</kbd> invert colors for the current viewer,
-- `pdf-viewer:compile`: <kbd>F12</kbd> compile the source `.typ` or `.tex` file,
+- `pdf-viewer:refresh`: refresh content for the current viewer,
+- `pdf-viewer:toggle-refreshing`: toggle auto-refresh for the current viewer,
+- `pdf-viewer:invert-current`: invert colors for the current viewer,
+- `pdf-viewer:compile`: compile the source `.typ` or `.tex` file,
 - `pdf-viewer:open-tex`: open the corresponding `.typ` or `.tex` source file,
 - `pdf-viewer:next-page`: go to the next page,
 - `pdf-viewer:previous-page`: go to the previous page,
@@ -55,7 +55,7 @@ Commands available in `.pdf-viewer`:
 - `pdf-viewer:find`: open find,
 - `pdf-viewer:find-next`: find next match,
 - `pdf-viewer:find-previous`: find previous match,
-- `pdf-viewer:copy`: <kbd>Ctrl+C</kbd> copy the selected text to the clipboard,
+- `pdf-viewer:copy`: copy the selected text to the clipboard,
 - `pdf-viewer:toggle-sidebar`: toggle the PDF sidebar,
 - `pdf-viewer:presentation-mode`: enter presentation mode,
 - `pdf-viewer:download`: download the PDF,
@@ -77,7 +77,7 @@ The package supports additional options when opening a PDF. These options allow 
 
 ## LaTeX
 
-This package integrates with [latex-tools](https://web.pulsar-edit.dev/packages/latex-tools) for compilation and SyncTeX support:
+This package integrates with [latex-tools](https://github.com/asiloisad/pulsar-latex-tools) for compilation and SyncTeX support:
 
 - **Compile**: Use directly from the PDF viewer to compile the corresponding `.tex` file.
 - **Forward SyncTeX** (source → PDF): Use synctex trigger from the editor.
@@ -88,7 +88,7 @@ For PDF files created by TeX using the `--synctex=1` option, clicking on the PDF
 
 ## Typst
 
-This package integrates with [typst-tools](https://web.pulsar-edit.dev/packages/typst-tools) for compilation:
+This package integrates with [typst-tools](https://github.com/asiloisad/pulsar-typst-tools) for compilation:
 
 - **Compile**: Use directly from the PDF viewer to compile the corresponding `.typ` file.
 - **Open source**: Use `pdf-viewer:open-tex` to open the `.typ` source file.
@@ -159,6 +159,15 @@ In your `package.json`:
       }
     }
   }
+}
+```
+
+In your main module:
+
+```javascript
+consumeNavigationAdapter(adapter) {
+  // adapter follows the navigation-adapter protocol:
+  // handlesItem(item), observeHeaders(item, callback), navigateTo(item, header)
 }
 ```
 
