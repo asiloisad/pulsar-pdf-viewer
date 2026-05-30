@@ -19,6 +19,7 @@
  * @licend The above is the entire license notice for the
  * JavaScript code in this page
  */
+import "../../custom/api-fix.js";
 
 /**
  * pdfjsVersion = 6.0.227

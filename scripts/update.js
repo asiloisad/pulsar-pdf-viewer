@@ -143,9 +143,14 @@ function patchFirstPagePromiseTDZ() {
 
 function patchPolyfills() {
   const importLine = 'import "../../custom/api-fix.js";\n';
-  const buildDir = path.join(PDFJS_DIR, "build");
-  for (const file of ["pdf.mjs", "pdf.worker.mjs"]) {
-    const filePath = path.join(buildDir, file);
+  const files = [
+    path.join(PDFJS_DIR, "build", "pdf.mjs"),
+    path.join(PDFJS_DIR, "build", "pdf.worker.mjs"),
+    path.join(PDFJS_DIR, "web", "viewer.mjs"),
+  ];
+
+  for (const filePath of files) {
+    const file = path.basename(filePath);
     let content = fs.readFileSync(filePath, "utf8");
     if (content.includes("custom/api-fix.js")) {
       console.log(`${file} already imports api-fix.js`);

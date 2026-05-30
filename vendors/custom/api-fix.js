@@ -1,6 +1,69 @@
 // Polyfills for APIs unavailable in Chromium 124 / Electron 30
 // Required by PDF.js v5.4.624+
 
+// Promise.withResolvers (Chrome 119+)
+if (typeof Promise.withResolvers !== "function") {
+  Promise.withResolvers = function () {
+    var resolve;
+    var reject;
+    var promise = new Promise(function (res, rej) {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise: promise, resolve: resolve, reject: reject };
+  };
+}
+
+// RegExp.escape (Chrome 136+)
+if (typeof RegExp.escape !== "function") {
+  RegExp.escape = function (string) {
+    return String(string).replace(/[\s\S]/g, function (char, index) {
+      var code = char.charCodeAt(0);
+      var hex = code.toString(16).padStart(2, "0");
+
+      if (index === 0 && /[0-9A-Za-z]/.test(char)) {
+        return "\\x" + hex;
+      }
+      if ("^$\\.*+?()[]{}|/".indexOf(char) !== -1) {
+        return "\\" + char;
+      }
+      if (",-=<>#&!%:;@~'`\"".indexOf(char) !== -1) {
+        return "\\x" + hex;
+      }
+
+      switch (char) {
+        case "\f":
+          return "\\f";
+        case "\n":
+          return "\\n";
+        case "\r":
+          return "\\r";
+        case "\t":
+          return "\\t";
+        case "\v":
+          return "\\v";
+        case " ":
+          return "\\x20";
+      }
+
+      return code < 0x20 || code > 0x7e
+        ? "\\u" + code.toString(16).padStart(4, "0")
+        : char;
+    });
+  };
+}
+
+// URL.parse (Chrome 126+)
+if (!URL.parse) {
+  URL.parse = function (url, base) {
+    try {
+      return new URL(url, base);
+    } catch (e) {
+      return null;
+    }
+  };
+}
+
 // Map.prototype.getOrInsertComputed (Chrome 133+)
 if (!Map.prototype.getOrInsertComputed) {
   Map.prototype.getOrInsertComputed = function (key, callbackFn) {
