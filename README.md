@@ -14,7 +14,7 @@ View PDF files directly in Pulsar. Based on Mozilla's PDF.js with theme integrat
 - **Typst integration**: Compile `.typ` files via [typst-tools](https://github.com/asiloisad/pulsar-typst-tools).
 - **Build coordination**: Pauses auto-refresh during builds and reloads on completion.
 - **Document outline**: Navigate via [navigation-panel](https://github.com/asiloisad/pulsar-navigation-panel).
-- **Scrollmap**: Shows outline markers via [scrollmap-pdf-viewer](https://github.com/asiloisad/pulsar-scrollmap-pdf-viewer).
+- **Scrollmap**: Shows PDF outline markers on the scrollbar when [scrollmap](https://github.com/asiloisad/pulsar-scrollmap) is installed.
 - **SOFiSTiK help**: Search keywords at current scope via [sofistik-tools](https://github.com/asiloisad/pulsar-sofistik-tools).
 
 ## Installation

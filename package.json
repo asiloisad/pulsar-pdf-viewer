@@ -44,6 +44,11 @@
       "versions": {
         "1.0.0": "consumeTypstTools"
       }
+    },
+    "simplemap": {
+      "versions": {
+        "1.0.0": "consumeSimpleMap"
+      }
     }
   },
   "configSchema": {
@@ -114,8 +119,38 @@
       "type": "boolean",
       "default": false
     },
-    "debug": {
+    "scrollmap": {
       "order": 8,
+      "title": "Scrollmap",
+      "description": "Show PDF outline markers on the scrollbar when scrollmap is installed.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "order": 1,
+          "type": "boolean",
+          "title": "Enabled",
+          "default": true
+        },
+        "maxDepth": {
+          "order": 2,
+          "type": "integer",
+          "title": "Max Depth",
+          "description": "Maximum outline depth to show. Zero means no limit.",
+          "minimum": 0,
+          "default": 0
+        },
+        "threshold": {
+          "order": 3,
+          "type": "integer",
+          "title": "Threshold",
+          "description": "Hide markers if count exceeds this value. Zero means no limit.",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    },
+    "debug": {
+      "order": 9,
       "title": "Debug",
       "description": "Show some errors in console.",
       "type": "boolean",
