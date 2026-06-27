@@ -22,8 +22,8 @@
 import "../../custom/api-fix.js";
 
 /**
- * pdfjsVersion = 6.0.227
- * pdfjsBuild = 241dbabbf
+ * pdfjsVersion = 6.1.200
+ * pdfjsBuild = 6353acefe
  */
 
 ;// ./src/shared/util.js
@@ -139,11 +139,19 @@ const AnnotationType = {
   TRAPNET: 23,
   WATERMARK: 24,
   THREED: 25,
-  REDACT: 26
+  REDACT: 26,
+  RICHMEDIA: 27
 };
 const AnnotationReplyType = (/* unused pure expression or super */ null && ({
   GROUP: "Group",
   REPLY: "R"
+}));
+const AnnotationRenditionOperation = (/* unused pure expression or super */ null && ({
+  PLAY_OR_RESUME: 0,
+  STOP: 1,
+  PAUSE: 2,
+  RESUME: 3,
+  PLAY: 4
 }));
 const AnnotationFlag = (/* unused pure expression or super */ null && ({
   INVISIBLE: 0x01,
@@ -528,6 +536,9 @@ class FeatureTest {
     input.value = "#ff000080";
     return shadow(this, "isAlphaColorInputSupported", input.value !== "#ff0000");
   }
+  static get isBackdropFilterSupported() {
+    return shadow(this, "isBackdropFilterSupported", typeof CSS !== "undefined" && CSS.supports("backdrop-filter", "blur(1px)"));
+  }
 }
 class Util {
   static get hexNums() {
@@ -895,13 +906,6 @@ class PageViewport {
     const p = [x, y];
     Util.applyTransform(p, this.transform);
     return p;
-  }
-  convertToViewportRectangle(rect) {
-    const topLeft = [rect[0], rect[1]];
-    Util.applyTransform(topLeft, this.transform);
-    const bottomRight = [rect[2], rect[3]];
-    Util.applyTransform(bottomRight, this.transform);
-    return [topLeft[0], topLeft[1], bottomRight[0], bottomRight[1]];
   }
   convertToPdfPoint(x, y) {
     const p = [x, y];
@@ -2031,7 +2035,7 @@ class FloatingToolbar {
 }
 
 ;// ./src/shared/internal_evt.js
-const INTERNAL_EVT = "a0babde2-53ef-4493-91fe-62dfc3177bcf";
+const INTERNAL_EVT = "d3d019bf-c73b-49f4-94f3-e62eb099fd62";
 const internalOpt = Object.freeze({
   internal: INTERNAL_EVT
 });
@@ -2374,55 +2378,89 @@ class CommandManager {
   }
 }
 class KeyboardManager {
+  static ALT = 0x1;
+  static CTRL = 0x2;
+  static META = 0x4;
+  static SHIFT = 0x8;
   constructor(callbacks) {
-    this.buffer = [];
     this.callbacks = new Map();
-    this.allKeys = new Set();
     const {
       isMac
     } = FeatureTest.platform;
     for (const [keys, callback, options = {}] of callbacks) {
+      const hasMacOverride = keys.some(k => k.startsWith("mac+"));
       for (const key of keys) {
-        const isMacKey = key.startsWith("mac+");
-        if (isMac && isMacKey) {
-          this.callbacks.set(key.slice(4), {
-            callback,
-            options
-          });
-          this.allKeys.add(key.split("+").at(-1));
-        } else if (!isMac && !isMacKey) {
-          this.callbacks.set(key, {
-            callback,
-            options
-          });
-          this.allKeys.add(key.split("+").at(-1));
+        let shortcut = key;
+        if (hasMacOverride) {
+          const isMacKey = key.startsWith("mac+");
+          if (isMac !== isMacKey) {
+            continue;
+          }
+          if (isMacKey) {
+            shortcut = key.slice(4);
+          }
         }
+        const [keyName, modifiers] = KeyboardManager.#parseShortcut(shortcut);
+        if (keyName === null) {
+          continue;
+        }
+        this.callbacks.getOrInsertComputed(keyName, makeArr).push({
+          callback,
+          options,
+          modifiers
+        });
       }
     }
   }
-  #serialize(event) {
-    if (event.altKey) {
-      this.buffer.push("alt");
+  static #parseShortcut(value) {
+    let keyPart = null;
+    let modifiers = 0;
+    for (let part of value.split("+")) {
+      part = part.trim();
+      if (!part) {
+        continue;
+      }
+      const upper = part.toUpperCase();
+      const modifier = KeyboardManager[upper];
+      if (modifier) {
+        modifiers |= modifier;
+        continue;
+      }
+      if (keyPart !== null) {
+        warn(`KeyboardManager: multiple keys in shortcut "${value}"`);
+        break;
+      }
+      keyPart = upper === "SPACE" ? " " : part;
     }
-    if (event.ctrlKey) {
-      this.buffer.push("ctrl");
+    if (keyPart === null) {
+      warn(`KeyboardManager: no key found in shortcut "${value}"`);
     }
-    if (event.metaKey) {
-      this.buffer.push("meta");
+    return [keyPart, modifiers];
+  }
+  static #codeToKey(code) {
+    const match = /^(?:Key([A-Z])|(?:Digit|Numpad)(\d))$/.exec(code);
+    if (!match) {
+      return null;
     }
-    if (event.shiftKey) {
-      this.buffer.push("shift");
-    }
-    this.buffer.push(event.key);
-    const str = this.buffer.join("+");
-    this.buffer.length = 0;
-    return str;
+    return match[1]?.toLowerCase() ?? match[2];
   }
   exec(self, event) {
-    if (!this.allKeys.has(event.key)) {
-      return;
+    let shortcuts = this.callbacks.get(event.key);
+    if (!shortcuts) {
+      if (/^[a-z]$/i.test(event.key)) {
+        return;
+      }
+      const fallback = KeyboardManager.#codeToKey(event.code);
+      if (fallback === null || fallback === event.key) {
+        return;
+      }
+      shortcuts = this.callbacks.get(fallback);
+      if (!shortcuts) {
+        return;
+      }
     }
-    const info = this.callbacks.get(this.#serialize(event));
+    const eventModifiers = (event.altKey ? KeyboardManager.ALT : 0) | (event.ctrlKey ? KeyboardManager.CTRL : 0) | (event.metaKey ? KeyboardManager.META : 0) | (event.shiftKey ? KeyboardManager.SHIFT : 0);
+    const info = shortcuts.find(shortcut => shortcut.modifiers === eventModifiers);
     if (!info) {
       return;
     }
@@ -2555,33 +2593,33 @@ class AnnotationEditorUIManager {
       checker: textInputChecker
     }], [["Backspace", "alt+Backspace", "ctrl+Backspace", "shift+Backspace", "mac+Backspace", "mac+alt+Backspace", "mac+ctrl+Backspace", "Delete", "ctrl+Delete", "shift+Delete", "mac+Delete"], proto.delete, {
       checker: textInputChecker
-    }], [["Enter", "mac+Enter"], proto.addNewEditorFromKeyboard, {
+    }], [["Enter"], proto.addNewEditorFromKeyboard, {
       checker: (self, {
         target: el
       }) => !(el instanceof HTMLButtonElement) && self.#container.contains(el) && !self.isEnterHandled
-    }], [[" ", "mac+ "], proto.addNewEditorFromKeyboard, {
+    }], [["Space"], proto.addNewEditorFromKeyboard, {
       checker: (self, {
         target: el
       }) => !(el instanceof HTMLButtonElement) && self.#container.contains(document.activeElement)
-    }], [["Escape", "mac+Escape"], proto.unselectAll], [["ArrowLeft", "mac+ArrowLeft"], proto.translateSelectedEditors, {
+    }], [["Escape"], proto.unselectAll], [["ArrowLeft"], proto.translateSelectedEditors, {
       args: [-small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], proto.translateSelectedEditors, {
       args: [-big, 0],
       checker: arrowChecker
-    }], [["ArrowRight", "mac+ArrowRight"], proto.translateSelectedEditors, {
+    }], [["ArrowRight"], proto.translateSelectedEditors, {
       args: [small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowRight", "mac+shift+ArrowRight"], proto.translateSelectedEditors, {
       args: [big, 0],
       checker: arrowChecker
-    }], [["ArrowUp", "mac+ArrowUp"], proto.translateSelectedEditors, {
+    }], [["ArrowUp"], proto.translateSelectedEditors, {
       args: [0, -small],
       checker: arrowChecker
     }], [["ctrl+ArrowUp", "mac+shift+ArrowUp"], proto.translateSelectedEditors, {
       args: [0, -big],
       checker: arrowChecker
-    }], [["ArrowDown", "mac+ArrowDown"], proto.translateSelectedEditors, {
+    }], [["ArrowDown"], proto.translateSelectedEditors, {
       args: [0, small],
       checker: arrowChecker
     }], [["ctrl+ArrowDown", "mac+shift+ArrowDown"], proto.translateSelectedEditors, {
@@ -2812,7 +2850,7 @@ class AnnotationEditorUIManager {
         resolve();
       }
     };
-    this._eventBus.on("editorsrendered", onEditorsRendered);
+    this._eventBus.on("editorsrendered", onEditorsRendered, internalOpt);
     await promise;
   }
   getSignature(editor) {
@@ -2827,7 +2865,8 @@ class AnnotationEditorUIManager {
   switchToMode(mode, callback) {
     this._eventBus.on("annotationeditormodechanged", callback, {
       once: true,
-      signal: this._signal
+      signal: this._signal,
+      ...internalOpt
     });
     this._eventBus.dispatch("showannotationeditorui", {
       source: this,
@@ -3773,9 +3812,6 @@ class AnnotationEditorUIManager {
     this.#dispatchUpdateStates({
       hasSelectedEditor: true
     });
-  }
-  isSelected(editor) {
-    return this.#selectedEditors.has(editor);
   }
   get firstSelectedEditor() {
     return this.#selectedEditors.values().next().value;
@@ -4940,23 +4976,23 @@ class AnnotationEditor {
     const resize = AnnotationEditor.prototype._resizeWithKeyboard;
     const small = AnnotationEditorUIManager.TRANSLATE_SMALL;
     const big = AnnotationEditorUIManager.TRANSLATE_BIG;
-    return shadow(this, "_resizerKeyboardManager", new KeyboardManager([[["ArrowLeft", "mac+ArrowLeft"], resize, {
+    return shadow(this, "_resizerKeyboardManager", new KeyboardManager([[["ArrowLeft"], resize, {
       args: [-small, 0]
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], resize, {
       args: [-big, 0]
-    }], [["ArrowRight", "mac+ArrowRight"], resize, {
+    }], [["ArrowRight"], resize, {
       args: [small, 0]
     }], [["ctrl+ArrowRight", "mac+shift+ArrowRight"], resize, {
       args: [big, 0]
-    }], [["ArrowUp", "mac+ArrowUp"], resize, {
+    }], [["ArrowUp"], resize, {
       args: [0, -small]
     }], [["ctrl+ArrowUp", "mac+shift+ArrowUp"], resize, {
       args: [0, -big]
-    }], [["ArrowDown", "mac+ArrowDown"], resize, {
+    }], [["ArrowDown"], resize, {
       args: [0, small]
     }], [["ctrl+ArrowDown", "mac+shift+ArrowDown"], resize, {
       args: [0, big]
-    }], [["Escape", "mac+Escape"], AnnotationEditor.prototype._stopResizingWithKeyboard]]));
+    }], [["Escape"], AnnotationEditor.prototype._stopResizingWithKeyboard]]));
   }
   constructor(parameters) {
     this.parent = parameters.parent;
@@ -6803,9 +6839,7 @@ class AnnotationStorage {
       const {
         type
       } = editorStats;
-      if (!typeToEditor.has(type)) {
-        typeToEditor.set(type, Object.getPrototypeOf(value).constructor);
-      }
+      typeToEditor.getOrInsertComputed(type, () => Object.getPrototypeOf(value).constructor);
       stats ||= Object.create(null);
       const map = stats[type] ||= new Map();
       for (const [key, val] of Object.entries(editorStats)) {
@@ -7676,6 +7710,7 @@ class CanvasImagesTracker {
 
 class FontLoader {
   #systemFonts = new Set();
+  #styleSheet = null;
   constructor({
     ownerDocument = globalThis.document,
     styleElement = null
@@ -7695,12 +7730,29 @@ class FontLoader {
     this._document.fonts.delete(nativeFontFace);
   }
   insertRule(rule) {
+    const styleSheet = this.#getStyleSheet();
+    styleSheet.insertRule(rule, styleSheet.cssRules.length);
+  }
+  #getStyleSheet() {
+    if (this.#styleSheet) {
+      return this.#styleSheet;
+    }
+    const StyleSheet = this._document.defaultView?.CSSStyleSheet || globalThis.CSSStyleSheet;
+    if (!this.styleElement && StyleSheet) {
+      const {
+        adoptedStyleSheets
+      } = this._document;
+      if (adoptedStyleSheets) {
+        const styleSheet = new StyleSheet();
+        adoptedStyleSheets.push(styleSheet);
+        return this.#styleSheet = styleSheet;
+      }
+    }
     if (!this.styleElement) {
       this.styleElement = this._document.createElement("style");
       this._document.documentElement.getElementsByTagName("head")[0].append(this.styleElement);
     }
-    const styleSheet = this.styleElement.sheet;
-    styleSheet.insertRule(rule, styleSheet.cssRules.length);
+    return this.#styleSheet = this.styleElement.sheet;
   }
   clear() {
     for (const nativeFontFace of this.nativeFontFaces) {
@@ -7708,6 +7760,15 @@ class FontLoader {
     }
     this.nativeFontFaces.clear();
     this.#systemFonts.clear();
+    if (this.#styleSheet) {
+      const {
+        adoptedStyleSheets
+      } = this._document;
+      if (adoptedStyleSheets?.includes(this.#styleSheet)) {
+        this._document.adoptedStyleSheets = adoptedStyleSheets.filter(styleSheet => styleSheet !== this.#styleSheet);
+      }
+      this.#styleSheet = null;
+    }
     if (this.styleElement) {
       this.styleElement.remove();
       this.styleElement = null;
@@ -9404,6 +9465,118 @@ class NodeBinaryDataFactory extends BaseBinaryDataFactory {
   }
 }
 
+;// ./src/shared/image_utils.js
+/* unused harmony import specifier */ var image_utils_ImageKind;
+/* unused harmony import specifier */ var image_utils_FeatureTest;
+
+function convertToRGBA(params) {
+  switch (params.kind) {
+    case image_utils_ImageKind.GRAYSCALE_1BPP:
+      return convertBlackAndWhiteToRGBA(params);
+    case image_utils_ImageKind.RGB_24BPP:
+      return convertRGBToRGBA(params);
+  }
+  return null;
+}
+function convertBlackAndWhiteToRGBA({
+  src,
+  srcPos = 0,
+  dest,
+  width,
+  height,
+  nonBlackColor = 0xffffffff,
+  inverseDecode = false
+}) {
+  const black = FeatureTest.isLittleEndian ? 0xff000000 : 0x000000ff;
+  const [zeroMapping, oneMapping] = inverseDecode ? [nonBlackColor, black] : [black, nonBlackColor];
+  const widthInSource = width >> 3;
+  const widthRemainder = width & 7;
+  const xorMask = zeroMapping ^ oneMapping;
+  const srcLength = src.length;
+  dest = new Uint32Array(dest.buffer);
+  let destPos = 0;
+  for (let i = 0; i < height; ++i) {
+    for (const max = srcPos + widthInSource; srcPos < max; ++srcPos, destPos += 8) {
+      const elem = src[srcPos];
+      dest[destPos] = zeroMapping ^ -(elem >> 7 & 1) & xorMask;
+      dest[destPos + 1] = zeroMapping ^ -(elem >> 6 & 1) & xorMask;
+      dest[destPos + 2] = zeroMapping ^ -(elem >> 5 & 1) & xorMask;
+      dest[destPos + 3] = zeroMapping ^ -(elem >> 4 & 1) & xorMask;
+      dest[destPos + 4] = zeroMapping ^ -(elem >> 3 & 1) & xorMask;
+      dest[destPos + 5] = zeroMapping ^ -(elem >> 2 & 1) & xorMask;
+      dest[destPos + 6] = zeroMapping ^ -(elem >> 1 & 1) & xorMask;
+      dest[destPos + 7] = zeroMapping ^ -(elem & 1) & xorMask;
+    }
+    if (widthRemainder === 0) {
+      continue;
+    }
+    const elem = srcPos < srcLength ? src[srcPos++] : 255;
+    for (let j = 0; j < widthRemainder; ++j, ++destPos) {
+      dest[destPos] = zeroMapping ^ -(elem >> 7 - j & 1) & xorMask;
+    }
+  }
+  return {
+    srcPos,
+    destPos
+  };
+}
+function convertRGBToRGBA({
+  src,
+  srcPos = 0,
+  dest,
+  destPos = 0,
+  width,
+  height
+}) {
+  let i = 0;
+  const len = width * height * 3;
+  const len32 = len >> 2;
+  const src32 = new Uint32Array(src.buffer, srcPos, len32);
+  const alphaMask = FeatureTest.isLittleEndian ? 0xff000000 : 0xff;
+  if (FeatureTest.isLittleEndian) {
+    for (; i < len32 - 2; i += 3, destPos += 4) {
+      const s1 = src32[i],
+        s2 = src32[i + 1],
+        s3 = src32[i + 2];
+      dest[destPos] = s1 | alphaMask;
+      dest[destPos + 1] = s1 >>> 24 | s2 << 8 | alphaMask;
+      dest[destPos + 2] = s2 >>> 16 | s3 << 16 | alphaMask;
+      dest[destPos + 3] = s3 >>> 8 | alphaMask;
+    }
+    for (let j = i * 4, jj = srcPos + len; j < jj; j += 3) {
+      dest[destPos++] = src[j] | src[j + 1] << 8 | src[j + 2] << 16 | alphaMask;
+    }
+  } else {
+    for (; i < len32 - 2; i += 3, destPos += 4) {
+      const s1 = src32[i],
+        s2 = src32[i + 1],
+        s3 = src32[i + 2];
+      dest[destPos] = s1 | alphaMask;
+      dest[destPos + 1] = s1 << 24 | s2 >>> 8 | alphaMask;
+      dest[destPos + 2] = s2 << 16 | s3 >>> 16 | alphaMask;
+      dest[destPos + 3] = s3 << 8 | alphaMask;
+    }
+    for (let j = i * 4, jj = srcPos + len; j < jj; j += 3) {
+      dest[destPos++] = src[j] << 24 | src[j + 1] << 16 | src[j + 2] << 8 | alphaMask;
+    }
+  }
+  return {
+    srcPos: srcPos + len,
+    destPos
+  };
+}
+function grayToRGBA(src, dest) {
+  if (image_utils_FeatureTest.isLittleEndian) {
+    for (let i = 0, ii = src.length; i < ii; i++) {
+      dest[i] = src[i] * 0x10101 | 0xff000000;
+    }
+  } else {
+    for (let i = 0, ii = src.length; i < ii; i++) {
+      dest[i] = src[i] * 0x1010100 | 0x000000ff;
+    }
+  }
+}
+
 ;// ./src/display/webgpu.js
 const MESH_WGSL = `
 struct Uniforms {
@@ -10220,119 +10393,8 @@ class TilingPattern {
   }
 }
 
-;// ./src/shared/image_utils.js
-/* unused harmony import specifier */ var image_utils_ImageKind;
-/* unused harmony import specifier */ var image_utils_FeatureTest;
-
-function convertToRGBA(params) {
-  switch (params.kind) {
-    case image_utils_ImageKind.GRAYSCALE_1BPP:
-      return convertBlackAndWhiteToRGBA(params);
-    case image_utils_ImageKind.RGB_24BPP:
-      return convertRGBToRGBA(params);
-  }
-  return null;
-}
-function convertBlackAndWhiteToRGBA({
-  src,
-  srcPos = 0,
-  dest,
-  width,
-  height,
-  nonBlackColor = 0xffffffff,
-  inverseDecode = false
-}) {
-  const black = FeatureTest.isLittleEndian ? 0xff000000 : 0x000000ff;
-  const [zeroMapping, oneMapping] = inverseDecode ? [nonBlackColor, black] : [black, nonBlackColor];
-  const widthInSource = width >> 3;
-  const widthRemainder = width & 7;
-  const xorMask = zeroMapping ^ oneMapping;
-  const srcLength = src.length;
-  dest = new Uint32Array(dest.buffer);
-  let destPos = 0;
-  for (let i = 0; i < height; ++i) {
-    for (const max = srcPos + widthInSource; srcPos < max; ++srcPos, destPos += 8) {
-      const elem = src[srcPos];
-      dest[destPos] = zeroMapping ^ -(elem >> 7 & 1) & xorMask;
-      dest[destPos + 1] = zeroMapping ^ -(elem >> 6 & 1) & xorMask;
-      dest[destPos + 2] = zeroMapping ^ -(elem >> 5 & 1) & xorMask;
-      dest[destPos + 3] = zeroMapping ^ -(elem >> 4 & 1) & xorMask;
-      dest[destPos + 4] = zeroMapping ^ -(elem >> 3 & 1) & xorMask;
-      dest[destPos + 5] = zeroMapping ^ -(elem >> 2 & 1) & xorMask;
-      dest[destPos + 6] = zeroMapping ^ -(elem >> 1 & 1) & xorMask;
-      dest[destPos + 7] = zeroMapping ^ -(elem & 1) & xorMask;
-    }
-    if (widthRemainder === 0) {
-      continue;
-    }
-    const elem = srcPos < srcLength ? src[srcPos++] : 255;
-    for (let j = 0; j < widthRemainder; ++j, ++destPos) {
-      dest[destPos] = zeroMapping ^ -(elem >> 7 - j & 1) & xorMask;
-    }
-  }
-  return {
-    srcPos,
-    destPos
-  };
-}
-function convertRGBToRGBA({
-  src,
-  srcPos = 0,
-  dest,
-  destPos = 0,
-  width,
-  height
-}) {
-  let i = 0;
-  const len = width * height * 3;
-  const len32 = len >> 2;
-  const src32 = new Uint32Array(src.buffer, srcPos, len32);
-  const alphaMask = image_utils_FeatureTest.isLittleEndian ? 0xff000000 : 0xff;
-  if (image_utils_FeatureTest.isLittleEndian) {
-    for (; i < len32 - 2; i += 3, destPos += 4) {
-      const s1 = src32[i],
-        s2 = src32[i + 1],
-        s3 = src32[i + 2];
-      dest[destPos] = s1 | alphaMask;
-      dest[destPos + 1] = s1 >>> 24 | s2 << 8 | alphaMask;
-      dest[destPos + 2] = s2 >>> 16 | s3 << 16 | alphaMask;
-      dest[destPos + 3] = s3 >>> 8 | alphaMask;
-    }
-    for (let j = i * 4, jj = srcPos + len; j < jj; j += 3) {
-      dest[destPos++] = src[j] | src[j + 1] << 8 | src[j + 2] << 16 | alphaMask;
-    }
-  } else {
-    for (; i < len32 - 2; i += 3, destPos += 4) {
-      const s1 = src32[i],
-        s2 = src32[i + 1],
-        s3 = src32[i + 2];
-      dest[destPos] = s1 | alphaMask;
-      dest[destPos + 1] = s1 << 24 | s2 >>> 8 | alphaMask;
-      dest[destPos + 2] = s2 << 16 | s3 >>> 16 | alphaMask;
-      dest[destPos + 3] = s3 << 8 | alphaMask;
-    }
-    for (let j = i * 4, jj = srcPos + len; j < jj; j += 3) {
-      dest[destPos++] = src[j] << 24 | src[j + 1] << 16 | src[j + 2] << 8 | alphaMask;
-    }
-  }
-  return {
-    srcPos: srcPos + len,
-    destPos
-  };
-}
-function grayToRGBA(src, dest) {
-  if (image_utils_FeatureTest.isLittleEndian) {
-    for (let i = 0, ii = src.length; i < ii; i++) {
-      dest[i] = src[i] * 0x10101 | 0xff000000;
-    }
-  } else {
-    for (let i = 0, ii = src.length; i < ii; i++) {
-      dest[i] = src[i] * 0x1010100 | 0x000000ff;
-    }
-  }
-}
-
 ;// ./src/display/canvas.js
+
 
 
 
@@ -10473,66 +10535,35 @@ class CanvasExtraState {
   }
 }
 function putBinaryImageData(ctx, imgData) {
-  if (imgData instanceof ImageData) {
-    ctx.putImageData(imgData, 0, 0);
-    return;
-  }
-  const height = imgData.height,
-    width = imgData.width;
+  const {
+    width,
+    height,
+    kind
+  } = imgData;
   const partialChunkHeight = height % FULL_CHUNK_HEIGHT;
   const fullChunks = (height - partialChunkHeight) / FULL_CHUNK_HEIGHT;
   const totalChunks = partialChunkHeight === 0 ? fullChunks : fullChunks + 1;
   const chunkImgData = ctx.createImageData(width, FULL_CHUNK_HEIGHT);
-  let srcPos = 0,
-    destPos;
+  let srcPos = 0;
   const src = imgData.data;
   const dest = chunkImgData.data;
-  let i, j, thisChunkHeight, elemsInThisChunk;
-  if (imgData.kind === ImageKind.GRAYSCALE_1BPP) {
-    const srcLength = src.byteLength;
-    const dest32 = new Uint32Array(dest.buffer, 0, dest.byteLength >> 2);
-    const dest32DataLength = dest32.length;
-    const fullSrcDiff = width + 7 >> 3;
-    const white = 0xffffffff;
-    const black = FeatureTest.isLittleEndian ? 0xff000000 : 0x000000ff;
+  let i;
+  if (kind === ImageKind.GRAYSCALE_1BPP) {
     for (i = 0; i < totalChunks; i++) {
-      thisChunkHeight = i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight;
-      destPos = 0;
-      for (j = 0; j < thisChunkHeight; j++) {
-        const srcDiff = srcLength - srcPos;
-        let k = 0;
-        const kEnd = srcDiff > fullSrcDiff ? width : srcDiff * 8 - 7;
-        const kEndUnrolled = kEnd & ~7;
-        let mask = 0;
-        let srcByte = 0;
-        for (; k < kEndUnrolled; k += 8) {
-          srcByte = src[srcPos++];
-          dest32[destPos++] = srcByte & 128 ? white : black;
-          dest32[destPos++] = srcByte & 64 ? white : black;
-          dest32[destPos++] = srcByte & 32 ? white : black;
-          dest32[destPos++] = srcByte & 16 ? white : black;
-          dest32[destPos++] = srcByte & 8 ? white : black;
-          dest32[destPos++] = srcByte & 4 ? white : black;
-          dest32[destPos++] = srcByte & 2 ? white : black;
-          dest32[destPos++] = srcByte & 1 ? white : black;
-        }
-        for (; k < kEnd; k++) {
-          if (mask === 0) {
-            srcByte = src[srcPos++];
-            mask = 128;
-          }
-          dest32[destPos++] = srcByte & mask ? white : black;
-          mask >>= 1;
-        }
-      }
-      while (destPos < dest32DataLength) {
-        dest32[destPos++] = 0;
-      }
+      ({
+        srcPos
+      } = convertBlackAndWhiteToRGBA({
+        src,
+        srcPos,
+        dest,
+        width,
+        height: i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight
+      }));
       ctx.putImageData(chunkImgData, 0, i * FULL_CHUNK_HEIGHT);
     }
-  } else if (imgData.kind === ImageKind.RGBA_32BPP) {
-    j = 0;
-    elemsInThisChunk = width * FULL_CHUNK_HEIGHT * 4;
+  } else if (kind === ImageKind.RGBA_32BPP) {
+    let j = 0;
+    let elemsInThisChunk = width * FULL_CHUNK_HEIGHT * 4;
     for (i = 0; i < fullChunks; i++) {
       dest.set(src.subarray(srcPos, srcPos + elemsInThisChunk));
       srcPos += elemsInThisChunk;
@@ -10544,25 +10575,21 @@ function putBinaryImageData(ctx, imgData) {
       dest.set(src.subarray(srcPos, srcPos + elemsInThisChunk));
       ctx.putImageData(chunkImgData, 0, j);
     }
-  } else if (imgData.kind === ImageKind.RGB_24BPP) {
-    thisChunkHeight = FULL_CHUNK_HEIGHT;
-    elemsInThisChunk = width * thisChunkHeight;
+  } else if (kind === ImageKind.RGB_24BPP) {
     for (i = 0; i < totalChunks; i++) {
-      if (i >= fullChunks) {
-        thisChunkHeight = partialChunkHeight;
-        elemsInThisChunk = width * thisChunkHeight;
-      }
-      destPos = 0;
-      for (j = elemsInThisChunk; j--;) {
-        dest[destPos++] = src[srcPos++];
-        dest[destPos++] = src[srcPos++];
-        dest[destPos++] = src[srcPos++];
-        dest[destPos++] = 255;
-      }
+      ({
+        srcPos
+      } = convertRGBToRGBA({
+        src,
+        srcPos,
+        dest: new Uint32Array(dest.buffer),
+        width,
+        height: i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight
+      }));
       ctx.putImageData(chunkImgData, 0, i * FULL_CHUNK_HEIGHT);
     }
   } else {
-    throw new Error(`bad image kind: ${imgData.kind}`);
+    throw new Error(`bad image kind: ${kind}`);
   }
 }
 function putBinaryImageMask(ctx, imgData) {
@@ -10570,8 +10597,10 @@ function putBinaryImageMask(ctx, imgData) {
     ctx.drawImage(imgData.bitmap, 0, 0);
     return;
   }
-  const height = imgData.height,
-    width = imgData.width;
+  const {
+    width,
+    height
+  } = imgData;
   const partialChunkHeight = height % FULL_CHUNK_HEIGHT;
   const fullChunks = (height - partialChunkHeight) / FULL_CHUNK_HEIGHT;
   const totalChunks = partialChunkHeight === 0 ? fullChunks : fullChunks + 1;
@@ -10580,7 +10609,6 @@ function putBinaryImageMask(ctx, imgData) {
   const src = imgData.data;
   const dest = chunkImgData.data;
   for (let i = 0; i < totalChunks; i++) {
-    const thisChunkHeight = i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight;
     ({
       srcPos
     } = convertBlackAndWhiteToRGBA({
@@ -10588,7 +10616,7 @@ function putBinaryImageMask(ctx, imgData) {
       srcPos,
       dest,
       width,
-      height: thisChunkHeight,
+      height: i < fullChunks ? FULL_CHUNK_HEIGHT : partialChunkHeight,
       nonBlackColor: 0
     }));
     ctx.putImageData(chunkImgData, 0, i * FULL_CHUNK_HEIGHT);
@@ -11263,11 +11291,7 @@ class CanvasGraphics {
     }
     let knockoutFilter = "none";
     if (needsAlphaScaling && this.#knockoutFilterCache instanceof Map) {
-      knockoutFilter = this.#knockoutFilterCache.get(alpha);
-      if (!knockoutFilter) {
-        knockoutFilter = this.filterFactory.addKnockoutFilter(alpha);
-        this.#knockoutFilterCache.set(alpha, knockoutFilter);
-      }
+      knockoutFilter = this.#knockoutFilterCache.getOrInsertComputed(alpha, () => this.filterFactory.addKnockoutFilter(alpha));
     }
     if (!needsAlphaScaling || knockoutFilter !== "none") {
       if (reuseEntry) {
@@ -11811,12 +11835,7 @@ class CanvasGraphics {
       bold = "bold";
     }
     const italic = fontObj.italic ? "italic" : "normal";
-    let browserFontSize = size;
-    if (size < MIN_FONT_SIZE) {
-      browserFontSize = MIN_FONT_SIZE;
-    } else if (size > MAX_FONT_SIZE) {
-      browserFontSize = MAX_FONT_SIZE;
-    }
+    const browserFontSize = MathClamp(size, MIN_FONT_SIZE, MAX_FONT_SIZE);
     this.current.fontSizeScale = size / browserFontSize;
     this.ctx.font = `${italic} ${bold} ${browserFontSize}px ${typeface}`;
   }
@@ -11961,12 +11980,12 @@ class CanvasGraphics {
       this.showType3Text(opIdx, glyphs);
       this.dependencyTracker?.recordShowTextOperation(opIdx);
       this.#endKnockoutElement(started);
-      return undefined;
+      return;
     }
     const fontSize = current.fontSize;
     if (fontSize === 0) {
       this.dependencyTracker?.recordOperation(opIdx);
-      return undefined;
+      return;
     }
     const started = this.#beginKnockoutElement(current.fillAlpha);
     const ctx = this.ctx;
@@ -12040,7 +12059,7 @@ class CanvasGraphics {
       ctx.restore();
       this.compose();
       this.#endKnockoutElement(started);
-      return undefined;
+      return;
     }
     let x = 0,
       i;
@@ -12111,7 +12130,6 @@ class CanvasGraphics {
     this.compose();
     this.dependencyTracker?.recordShowTextOperation(opIdx);
     this.#endKnockoutElement(started);
-    return undefined;
   }
   showType3Text(opIdx, glyphs) {
     const ctx = this.ctx;
@@ -12154,6 +12172,10 @@ class CanvasGraphics {
         warn(`Type3 character "${glyph.operatorListId}" is not available.`);
       } else if (this.contentVisible) {
         this.save();
+        if (operatorList.fnArray[0] === OPS.setCharWidth) {
+          current.fillAlpha = current.strokeAlpha = 1;
+          ctx.globalAlpha = 1;
+        }
         ctx.scale(fontSize, fontSize);
         ctx.transform(...fontMatrix);
         this.executeOperatorList(operatorList);
@@ -12313,10 +12335,7 @@ class CanvasGraphics {
       this.current.activeSMask = null;
     }
     const currentCtx = this.ctx;
-    if (!group.isolated && !group.knockout && this.#knockoutGroupLevel === 0) {
-      info("TODO: Fully support non-isolated non-knockout groups.");
-    }
-    if (!group.needsIsolation && !group.knockout && this.#knockoutGroupLevel === 0 && currentCtx.globalAlpha === 1 && currentCtx.globalCompositeOperation === "source-over" && !inSMaskMode) {
+    if ((!group.needsIsolation || !group.isolated && !group.hasSoftMask) && !group.knockout && !group.isGray && this.#knockoutGroupLevel === 0 && currentCtx.globalAlpha === 1 && currentCtx.globalCompositeOperation === "source-over" && !inSMaskMode) {
       if (group.bbox) {
         let clip = new Path2D();
         const [x0, y0, x1, y1] = group.bbox;
@@ -12332,6 +12351,9 @@ class CanvasGraphics {
       this.#groupStackMeta.push(null);
       this.groupLevel++;
       return;
+    }
+    if (!group.isolated && !group.knockout && this.#knockoutGroupLevel === 0) {
+      info("TODO: Fully support non-isolated non-knockout groups.");
     }
     const currentTransform = getCurrentTransform(currentCtx);
     if (group.matrix) {
@@ -12432,6 +12454,9 @@ class CanvasGraphics {
       this.restore(opIdx);
       return;
     }
+    if (group.isGray) {
+      this.#convertGroupToGray(groupCtx);
+    }
     this.ctx = ctx;
     this.ctx.imageSmoothingEnabled = false;
     this.dependencyTracker?.popBaseTransform();
@@ -12510,6 +12535,34 @@ class CanvasGraphics {
       this.compose(dirtyBox);
     }
   }
+  #convertGroupToGray(groupCtx) {
+    const {
+      canvas
+    } = groupCtx;
+    const {
+      width,
+      height
+    } = canvas;
+    if (FeatureTest.isCanvasFilterSupported) {
+      groupCtx.save();
+      groupCtx.setTransform(1, 0, 0, 1, 0, 0);
+      groupCtx.filter = "grayscale(1)";
+      groupCtx.globalAlpha = 1;
+      groupCtx.globalCompositeOperation = "copy";
+      groupCtx.drawImage(canvas, 0, 0);
+      groupCtx.restore();
+      return;
+    }
+    const imageData = groupCtx.getImageData(0, 0, width, height);
+    const {
+      data
+    } = imageData;
+    for (let i = 0, ii = data.length; i < ii; i += 4) {
+      const gray = data[i] * 0.2126 + data[i + 1] * 0.7152 + data[i + 2] * 0.0722 + 0.5 | 0;
+      data[i] = data[i + 1] = data[i + 2] = gray;
+    }
+    groupCtx.putImageData(imageData, 0, 0);
+  }
   #destroyKnockoutPools(groupMeta) {
     if (!groupMeta) {
       return;
@@ -12527,7 +12580,7 @@ class CanvasGraphics {
       groupMeta.knockoutBackdropEntry = null;
     }
   }
-  beginAnnotation(opIdx, id, rect, transform, matrix, hasOwnCanvas) {
+  beginAnnotation(opIdx, id, rect, transform, matrix, hasOwnCanvas, canvasName) {
     this.#restoreInitialState();
     resetCtxToDefault(this.ctx);
     this.ctx.save();
@@ -12557,7 +12610,18 @@ class CanvasGraphics {
           canvas,
           context
         } = this.annotationCanvas;
-        this.annotationCanvasMap.set(id, canvas);
+        if (canvasName) {
+          const canvases = this.annotationCanvasMap.getOrInsertComputed(id, makeArr);
+          canvas.setAttribute("data-canvas-name", canvasName);
+          const index = canvases.findIndex(c => c.getAttribute("data-canvas-name") === canvasName);
+          if (index === -1) {
+            canvases.push(canvas);
+          } else {
+            canvases[index] = canvas;
+          }
+        } else {
+          this.annotationCanvasMap.set(id, canvas);
+        }
         this.annotationCanvas.savedCtx = this.ctx;
         this.ctx = context;
         this.ctx.save();
@@ -12758,8 +12822,6 @@ class CanvasGraphics {
       const result = this.applyTransferMapsToBitmap(imgData);
       imgToPaint = result.img;
       inlineImgCanvas = result.canvasEntry;
-    } else if (typeof HTMLElement === "function" && imgData instanceof HTMLElement || !imgData.data) {
-      imgToPaint = imgData;
     } else {
       const tmpCanvas = this.canvasFactory.create(width, height);
       putBinaryImageData(tmpCanvas.context, imgData);
@@ -14154,16 +14216,24 @@ class OptionalContentGroup {
     this.#userSet = userSet;
     this.#visible = visible;
   }
+  get serializable() {
+    return {
+      userSet: this.#userSet,
+      visible: this.#visible
+    };
+  }
 }
 class OptionalContentConfig {
   #cachedGetHash = null;
   #groups = new Map();
   #initialHash = null;
   #order = null;
-  constructor(data, renderingIntent = RenderingIntentFlag.DISPLAY) {
+  #rawData;
+  creator = null;
+  name = null;
+  constructor(data, renderingIntent = RenderingIntentFlag.DISPLAY, groupState = null) {
+    this.#rawData = data;
     this.renderingIntent = renderingIntent;
-    this.name = null;
-    this.creator = null;
     if (data === null) {
       return;
     }
@@ -14173,16 +14243,25 @@ class OptionalContentConfig {
     for (const group of data.groups) {
       this.#groups.set(group.id, new OptionalContentGroup(renderingIntent, group));
     }
-    if (data.baseState === "OFF") {
-      for (const group of this.#groups.values()) {
-        group._setVisible(INTERNAL, false);
+    if (groupState) {
+      if (groupState.size !== this.#groups.size) {
+        unreachable("Incorrect serialized groupState.");
       }
-    }
-    for (const on of data.on) {
-      this.#groups.get(on)._setVisible(INTERNAL, true);
-    }
-    for (const off of data.off) {
-      this.#groups.get(off)._setVisible(INTERNAL, false);
+      for (const [id, group] of groupState) {
+        this.#groups.get(id)._setVisible(INTERNAL, group.visible, group.userSet);
+      }
+    } else {
+      if (data.baseState === "OFF") {
+        for (const group of this.#groups.values()) {
+          group._setVisible(INTERNAL, false);
+        }
+      }
+      for (const on of data.on) {
+        this.#groups.get(on)._setVisible(INTERNAL, true);
+      }
+      for (const off of data.off) {
+        this.#groups.get(off)._setVisible(INTERNAL, false);
+      }
     }
     this.#initialHash = this.getHash();
   }
@@ -14367,6 +14446,24 @@ class OptionalContentConfig {
   }
   [Symbol.iterator]() {
     return this.#groups.entries();
+  }
+  get serializable() {
+    const groupState = new Map();
+    for (const [id, group] of this.#groups) {
+      groupState.set(id, group.serializable);
+    }
+    return {
+      data: this.#rawData,
+      renderingIntent: this.renderingIntent,
+      groupState
+    };
+  }
+  static fromSerializable({
+    data,
+    renderingIntent,
+    groupState
+  }) {
+    return new OptionalContentConfig(data, renderingIntent, groupState);
   }
 }
 
@@ -15117,7 +15214,7 @@ function getDocument(src = {}) {
   }
   const docParams = {
     docId,
-    apiVersion: "6.0.227",
+    apiVersion: "6.1.200",
     data,
     password,
     disableAutoFetch,
@@ -15328,6 +15425,9 @@ class PDFDocumentProxy {
   }
   getAttachments() {
     return this._transport.getAttachments();
+  }
+  getAttachmentContent(id) {
+    return this._transport.getAttachmentContent(id);
   }
   getAnnotationsByType(types, pageIndexesToSkip) {
     return this._transport.getAnnotationsByType(types, pageIndexesToSkip);
@@ -16562,6 +16662,9 @@ class WorkerTransport {
   getAttachments() {
     return this.messageHandler.sendWithPromise("GetAttachments", null);
   }
+  getAttachmentContent(id) {
+    return this.messageHandler.sendWithPromise("GetAttachmentContent", id);
+  }
   getAnnotationsByType(types, pageIndexesToSkip) {
     return this.messageHandler.sendWithPromise("GetAnnotationsByType", {
       types,
@@ -16824,8 +16927,8 @@ class InternalRenderTask {
     }
   }
 }
-const version = "6.0.227";
-const build = "241dbabbf";
+const version = "6.1.200";
+const build = "6353acefe";
 
 ;// ./src/display/editor/color_picker.js
 
@@ -16844,7 +16947,7 @@ class ColorPicker {
   #uiManager = null;
   static #l10nColor = null;
   static get _keyboardManager() {
-    return shadow(this, "_keyboardManager", new KeyboardManager([[["Escape", "mac+Escape"], ColorPicker.prototype._hideDropdownFromKeyboard], [[" ", "mac+ "], ColorPicker.prototype._colorSelectFromKeyboard], [["ArrowDown", "ArrowRight", "mac+ArrowDown", "mac+ArrowRight"], ColorPicker.prototype._moveToNext], [["ArrowUp", "ArrowLeft", "mac+ArrowUp", "mac+ArrowLeft"], ColorPicker.prototype._moveToPrevious], [["Home", "mac+Home"], ColorPicker.prototype._moveToBeginning], [["End", "mac+End"], ColorPicker.prototype._moveToEnd]]));
+    return shadow(this, "_keyboardManager", new KeyboardManager([[["Escape"], ColorPicker.prototype._hideDropdownFromKeyboard], [["Space"], ColorPicker.prototype._colorSelectFromKeyboard], [["ArrowDown", "ArrowRight"], ColorPicker.prototype._moveToNext], [["ArrowUp", "ArrowLeft"], ColorPicker.prototype._moveToPrevious], [["Home"], ColorPicker.prototype._moveToBeginning], [["End"], ColorPicker.prototype._moveToEnd]]));
   }
   constructor({
     editor = null,
@@ -17310,6 +17413,9 @@ class AnnotationElementFactory {
         return new StampAnnotationElement(parameters);
       case AnnotationType.FILEATTACHMENT:
         return new FileAttachmentAnnotationElement(parameters);
+      case AnnotationType.RICHMEDIA:
+      case AnnotationType.SCREEN:
+        return new MediaAnnotationElement(parameters);
       default:
         return new AnnotationElement(parameters);
     }
@@ -17546,7 +17652,7 @@ class AnnotationElement {
     } = this;
     const container = document.createElement("section");
     container.setAttribute("data-annotation-id", data.id);
-    if (!(this instanceof WidgetAnnotationElement) && !(this instanceof LinkAnnotationElement)) {
+    if (!(this instanceof WidgetAnnotationElement) && !(this instanceof LinkAnnotationElement) && !(this instanceof MediaAnnotationElement)) {
       container.tabIndex = 0;
     }
     const {
@@ -17579,9 +17685,6 @@ class AnnotationElement {
       const verticalRadius = data.borderStyle.verticalCornerRadius;
       if (horizontalRadius > 0 || verticalRadius > 0) {
         const radius = `calc(${horizontalRadius}px * var(--total-scale-factor)) / calc(${verticalRadius}px * var(--total-scale-factor))`;
-        style.borderRadius = radius;
-      } else if (this instanceof RadioButtonWidgetAnnotationElement) {
-        const radius = `calc(${width}px * var(--total-scale-factor)) / calc(${height}px * var(--total-scale-factor))`;
         style.borderRadius = radius;
       }
       switch (data.borderStyle.style) {
@@ -17981,6 +18084,10 @@ class AnnotationElement {
   get height() {
     return this.data.rect[3] - this.data.rect[1];
   }
+  _setBackgroundColor(element) {
+    const color = this.data.backgroundColor || null;
+    element.style.backgroundColor = color === null ? "transparent" : Util.makeHexColor(...color);
+  }
 }
 class EditorAnnotationElement extends AnnotationElement {
   constructor(parameters) {
@@ -18052,7 +18159,7 @@ class LinkAnnotationElement extends AnnotationElement {
       this._bindNamedAction(link, data.action, data.overlaidText);
       isBound = true;
     } else if (data.attachment) {
-      this.#bindAttachment(link, data.attachment, data.overlaidText, data.attachmentDest);
+      this.#bindAttachment(link, data.attachmentId, data.attachment, data.overlaidText, data.attachmentDest);
       isBound = true;
     } else if (data.setOCGState) {
       this.#bindSetOCGState(link, data.setOCGState, data.overlaidText);
@@ -18109,15 +18216,21 @@ class LinkAnnotationElement extends AnnotationElement {
     }
     this.#setInternalLink();
   }
-  #bindAttachment(link, attachment, overlaidText = "", dest = null) {
+  #bindAttachment(link, attachmentId, attachment, overlaidText = "", dest = null) {
     link.href = this.linkService.getAnchorUrl("");
     if (attachment.description) {
       link.title = attachment.description;
     } else if (overlaidText) {
       link.title = overlaidText;
     }
+    const openAttachment = async () => {
+      const content = await this.linkService.getAttachmentContent(attachmentId);
+      if (content) {
+        this.downloadManager?.openOrDownloadData(content, attachment.filename, dest);
+      }
+    };
     link.onclick = () => {
-      this.downloadManager?.openOrDownloadData(attachment.content, attachment.filename, dest);
+      openAttachment();
       return false;
     };
     this.#setInternalLink();
@@ -18289,14 +18402,6 @@ class WidgetAnnotationElement extends AnnotationElement {
   render() {
     return this.container;
   }
-  showElementAndHideCanvas(element) {
-    if (this.data.hasOwnCanvas) {
-      if (element.previousSibling?.nodeName === "CANVAS") {
-        element.previousSibling.hidden = true;
-      }
-      element.hidden = false;
-    }
-  }
   _getKeyModifier(event) {
     return FeatureTest.platform.isMac ? event.metaKey : event.ctrlKey;
   }
@@ -18358,10 +18463,6 @@ class WidgetAnnotationElement extends AnnotationElement {
       }
     }
   }
-  _setBackgroundColor(element) {
-    const color = this.data.backgroundColor || null;
-    element.style.backgroundColor = color === null ? "transparent" : Util.makeHexColor(...color);
-  }
   _setTextStyle(element) {
     const TEXT_ALIGNMENT = ["left", "center", "right"];
     const {
@@ -18383,7 +18484,7 @@ class WidgetAnnotationElement extends AnnotationElement {
     }
     style.fontSize = `calc(${computedFontSize}px * var(--total-scale-factor))`;
     style.color = Util.makeHexColor(...fontColor);
-    if (this.data.textAlignment !== null) {
+    if (this.data.textAlignment !== null && !this.data.comb) {
       style.textAlign = TEXT_ALIGNMENT[this.data.textAlignment];
     }
   }
@@ -18456,7 +18557,10 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
         }
       }
       if (this.data.hasOwnCanvas) {
-        element.hidden = true;
+        this.container.classList.add("hasOwnCanvas");
+        if (storage.has(id)) {
+          this.container.classList.add("sandboxModified");
+        }
       }
       GetElementsByNameSet.add(element);
       this.contentElement = element;
@@ -18533,7 +18637,7 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
           }
         });
         element.addEventListener("updatefromsandbox", jsEvent => {
-          this.showElementAndHideCanvas(jsEvent.target);
+          this.container.classList.add("sandboxModified");
           const actions = {
             value(event) {
               elementData.userValue = event.detail.value ?? "";
@@ -18745,7 +18849,18 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
         const fieldWidth = this.data.rect[2] - this.data.rect[0];
         const combWidth = fieldWidth / maxLen;
         element.classList.add("comb");
-        element.style.letterSpacing = `calc(${combWidth}px * var(--total-scale-factor) - 1ch)`;
+        element.style.setProperty("--comb-width", `calc(${combWidth}px * var(--total-scale-factor))`);
+        const alignment = this.data.textAlignment;
+        if (alignment === 1 || alignment === 2) {
+          const setCombOffset = () => {
+            const free = maxLen - element.value.length;
+            element.style.setProperty("--comb-offset", `${alignment === 1 ? free >> 1 : free}`);
+          };
+          setCombOffset();
+          for (const evt of ["input", "blur", "resetform", "updatefromsandbox"]) {
+            element.addEventListener(evt, setCombOffset);
+          }
+        }
       }
     } else {
       element = document.createElement("div");
@@ -18838,7 +18953,6 @@ class CheckboxWidgetAnnotationElement extends WidgetAnnotationElement {
       });
       this._setEventListeners(element, null, [["change", "Validate"], ["change", "Action"], ["focus", "Focus"], ["blur", "Blur"], ["mousedown", "Mouse Down"], ["mouseenter", "Mouse Enter"], ["mouseleave", "Mouse Exit"], ["mouseup", "Mouse Up"]], event => event.target.checked);
     }
-    this._setBackgroundColor(element);
     this._setDefaultPropertiesFromJS(element);
     this.container.append(element);
     return this.container;
@@ -18856,7 +18970,7 @@ class RadioButtonWidgetAnnotationElement extends WidgetAnnotationElement {
     const data = this.data;
     const id = data.id;
     let value = storage.getValue(id, {
-      value: data.fieldValue === data.buttonValue
+      value: data.buttonValue !== null && data.fieldValue === data.buttonValue
     }).value;
     if (typeof value === "string") {
       value = value !== data.buttonValue;
@@ -18921,7 +19035,6 @@ class RadioButtonWidgetAnnotationElement extends WidgetAnnotationElement {
       });
       this._setEventListeners(element, null, [["change", "Validate"], ["change", "Action"], ["focus", "Focus"], ["blur", "Blur"], ["mousedown", "Mouse Down"], ["mouseenter", "Mouse Enter"], ["mouseleave", "Mouse Exit"], ["mouseup", "Mouse Up"]], event => event.target.checked);
     }
-    this._setBackgroundColor(element);
     this._setDefaultPropertiesFromJS(element);
     this.container.append(element);
     return this.container;
@@ -20277,12 +20390,15 @@ class FileAttachmentAnnotationElement extends AnnotationElement {
       isRenderable: true
     });
     const {
+      fileId,
       file
     } = this.data;
     this.filename = file.filename;
     this.content = file.content;
+    this.fileId = fileId;
     this.linkService.eventBus?.dispatch("fileattachmentannotation", {
       source: this,
+      attachmentId: this.fileId,
       ...file
     });
   }
@@ -20327,8 +20443,130 @@ class FileAttachmentAnnotationElement extends AnnotationElement {
   addHighlightArea() {
     this.container.classList.add("highlightArea");
   }
-  #download() {
-    this.downloadManager?.openOrDownloadData(this.content, this.filename);
+  async #download() {
+    const {
+      fileId,
+      filename,
+      content: fallbackContent
+    } = this;
+    const content = (await this.linkService.getAttachmentContent(fileId)) || fallbackContent;
+    if (content) {
+      this.downloadManager?.openOrDownloadData(content, filename);
+    }
+  }
+}
+class MediaAnnotationElement extends AnnotationElement {
+  #abortController = new AbortController();
+  #contentUrl = null;
+  #media = null;
+  constructor(parameters) {
+    super(parameters, {
+      isRenderable: !!parameters.data.richMedia
+    });
+  }
+  render() {
+    this.container.classList.add("mediaAnnotation");
+    const {
+      filename
+    } = this.data.richMedia;
+    const button = document.createElement("button");
+    button.className = "mediaPlayButton";
+    button.type = "button";
+    button.title = button.ariaLabel = filename;
+    button.addEventListener("click", () => this.#load(button), {
+      signal: this.#abortController.signal
+    });
+    this.container.append(button);
+    return this.container;
+  }
+  async #load(button) {
+    const {
+      fileId,
+      filename,
+      contentType
+    } = this.data.richMedia;
+    button.disabled = true;
+    let content;
+    try {
+      content = await this.linkService.getAttachmentContent(fileId);
+    } catch {
+      return;
+    } finally {
+      button.disabled = false;
+    }
+    if (!content || !button.isConnected) {
+      return;
+    }
+    const {
+      signal
+    } = this.#abortController;
+    const url = URL.createObjectURL(new Blob([content], {
+      type: contentType
+    }));
+    this.#contentUrl = url;
+    const isAudio = contentType.startsWith("audio/");
+    const media = document.createElement(isAudio ? "audio" : "video");
+    this.#media = media;
+    media.className = "mediaContent";
+    this._setBackgroundColor(media);
+    media.src = url;
+    media.title = filename;
+    media.controls = true;
+    media.autoplay = true;
+    media.tabIndex = 0;
+    if (isAudio) {
+      let hovered = false;
+      let focused = false;
+      const updateControls = () => {
+        media.controls = hovered || focused;
+      };
+      this.container.addEventListener("pointerenter", () => {
+        hovered = true;
+        updateControls();
+      }, {
+        signal
+      });
+      this.container.addEventListener("pointerleave", () => {
+        hovered = false;
+        updateControls();
+      }, {
+        signal
+      });
+      this.container.addEventListener("focusin", () => {
+        focused = true;
+        updateControls();
+      }, {
+        signal
+      });
+      this.container.addEventListener("focusout", () => {
+        focused = false;
+        updateControls();
+      }, {
+        signal
+      });
+    }
+    media.addEventListener("emptied", () => this.#revokeContentUrl(url), {
+      once: true,
+      signal
+    });
+    button.replaceWith(media);
+    media.play().catch(() => {});
+  }
+  #revokeContentUrl(url = this.#contentUrl) {
+    if (url && url === this.#contentUrl) {
+      URL.revokeObjectURL(url);
+      this.#contentUrl = null;
+    }
+  }
+  destroy() {
+    this.#abortController.abort();
+    if (this.#media) {
+      this.#media.pause();
+      this.#media.removeAttribute("src");
+      this.#media.load();
+      this.#media = null;
+    }
+    this.#revokeContentUrl();
   }
 }
 class AnnotationLayer {
@@ -20558,6 +20796,15 @@ class AnnotationLayer {
     this.#setAnnotationCanvasMap();
     layer.hidden = false;
   }
+  destroy() {
+    for (const element of this.#elements) {
+      element.destroy?.();
+      this.#accessibilityManager?.removePointerInTextLayer(element.contentElement);
+    }
+    this.#elements.length = 0;
+    this.#editableAnnotations.clear();
+    this.div.replaceChildren();
+  }
   #setAnnotationCanvasMap() {
     if (!this.#annotationCanvasMap) {
       return;
@@ -20568,19 +20815,43 @@ class AnnotationLayer {
       if (!element) {
         continue;
       }
-      canvas.className = "annotationContent";
+      if (Array.isArray(canvas)) {
+        for (const cvs of canvas) {
+          cvs.className = "annotationContent";
+          cvs.ariaHidden = true;
+        }
+      } else {
+        canvas.className = "annotationContent";
+        canvas.ariaHidden = true;
+      }
+      const toRemove = [];
+      for (const child of element.children) {
+        if (child.nodeName === "CANVAS") {
+          toRemove.push(child);
+        }
+      }
+      for (const child of toRemove) {
+        child.remove();
+      }
+      const firstCanvas = Array.isArray(canvas) ? canvas[0] : canvas;
       const {
         firstChild
       } = element;
       if (!firstChild) {
-        element.append(canvas);
-      } else if (firstChild.nodeName === "CANVAS") {
-        firstChild.replaceWith(canvas);
+        element.append(firstCanvas);
       } else if (!firstChild.classList.contains("annotationContent")) {
-        firstChild.before(canvas);
+        firstChild.before(firstCanvas);
       } else {
-        firstChild.after(canvas);
+        firstChild.after(firstCanvas);
       }
+      if (Array.isArray(canvas)) {
+        let lastCanvas = firstCanvas;
+        for (let i = 1, ii = canvas.length; i < ii; i++) {
+          lastCanvas.after(canvas[i]);
+          lastCanvas = canvas[i];
+        }
+      }
+      this.#annotationCanvasMap.delete(id);
       const editableAnnotation = this.#editableAnnotations.get(id);
       if (!editableAnnotation) {
         continue;
@@ -20592,7 +20863,9 @@ class AnnotationLayer {
         editableAnnotation.canvas = canvas;
       }
     }
-    this.#annotationCanvasMap.clear();
+  }
+  refreshCanvases() {
+    this.#setAnnotationCanvasMap();
   }
   getEditableAnnotations() {
     return this.#editableAnnotations.values();
@@ -20683,25 +20956,25 @@ class FreeTextEditor extends AnnotationEditor {
     const big = AnnotationEditorUIManager.TRANSLATE_BIG;
     return shadow(this, "_keyboardManager", new KeyboardManager([[["ctrl+s", "mac+meta+s", "ctrl+p", "mac+meta+p"], proto.commitOrRemove, {
       bubbles: true
-    }], [["ctrl+Enter", "mac+meta+Enter", "Escape", "mac+Escape"], proto.commitOrRemove], [["ArrowLeft", "mac+ArrowLeft"], proto._translateEmpty, {
+    }], [["ctrl+Enter", "mac+meta+Enter"], proto.commitOrRemove], [["Escape"], proto.commitOrRemove], [["ArrowLeft"], proto._translateEmpty, {
       args: [-small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], proto._translateEmpty, {
       args: [-big, 0],
       checker: arrowChecker
-    }], [["ArrowRight", "mac+ArrowRight"], proto._translateEmpty, {
+    }], [["ArrowRight"], proto._translateEmpty, {
       args: [small, 0],
       checker: arrowChecker
     }], [["ctrl+ArrowRight", "mac+shift+ArrowRight"], proto._translateEmpty, {
       args: [big, 0],
       checker: arrowChecker
-    }], [["ArrowUp", "mac+ArrowUp"], proto._translateEmpty, {
+    }], [["ArrowUp"], proto._translateEmpty, {
       args: [0, -small],
       checker: arrowChecker
     }], [["ctrl+ArrowUp", "mac+shift+ArrowUp"], proto._translateEmpty, {
       args: [0, -big],
       checker: arrowChecker
-    }], [["ArrowDown", "mac+ArrowDown"], proto._translateEmpty, {
+    }], [["ArrowDown"], proto._translateEmpty, {
       args: [0, small],
       checker: arrowChecker
     }], [["ctrl+ArrowDown", "mac+shift+ArrowDown"], proto._translateEmpty, {
@@ -21206,7 +21479,7 @@ class FreeTextEditor extends AnnotationEditor {
           }
         }
       } = data;
-      if (!textContent || textContent.length === 0) {
+      if (!textContent?.length) {
         return null;
       }
       initialData = data = {
@@ -21970,9 +22243,6 @@ class HighlightOutline extends Outline {
   get box() {
     return this.#box;
   }
-  get classNamesForOutlining() {
-    return ["highlightOutline"];
-  }
 }
 class FreeHighlightOutliner extends FreeDrawOutliner {
   newFreeDrawOutline(outline, points, box, scaleFactor, innerMargin, isLTR) {
@@ -22022,13 +22292,13 @@ class HighlightEditor extends AnnotationEditor {
   static _freeHighlightClipId = "";
   static get _keyboardManager() {
     const proto = HighlightEditor.prototype;
-    return shadow(this, "_keyboardManager", new KeyboardManager([[["ArrowLeft", "mac+ArrowLeft"], proto._moveCaret, {
+    return shadow(this, "_keyboardManager", new KeyboardManager([[["ArrowLeft"], proto._moveCaret, {
       args: [0]
-    }], [["ArrowRight", "mac+ArrowRight"], proto._moveCaret, {
+    }], [["ArrowRight"], proto._moveCaret, {
       args: [1]
-    }], [["ArrowUp", "mac+ArrowUp"], proto._moveCaret, {
+    }], [["ArrowUp"], proto._moveCaret, {
       args: [2]
-    }], [["ArrowDown", "mac+ArrowDown"], proto._moveCaret, {
+    }], [["ArrowDown"], proto._moveCaret, {
       args: [3]
     }]]));
   }
@@ -23559,7 +23829,7 @@ class InkDrawOutliner {
     return Outline._normalizePoint(x, y, this.#parentWidth, this.#parentHeight, this.#rotation);
   }
   isEmpty() {
-    return !this.#lines || this.#lines.length === 0;
+    return !this.#lines?.length;
   }
   isCancellable() {
     return this.#points.length <= 10;
@@ -27625,6 +27895,7 @@ globalThis.pdfjsLib = {
   normalizeUnicode: normalizeUnicode,
   OPS: OPS,
   OutputScale: OutputScale,
+  PasswordException: PasswordException,
   PasswordResponses: PasswordResponses,
   PDFDataRangeTransport: PDFDataRangeTransport,
   PDFDateString: PDFDateString,
@@ -27649,6 +27920,6 @@ globalThis.pdfjsLib = {
   XfaLayer: XfaLayer
 };
 
-export { AbortException, AnnotationEditorLayer, AnnotationEditorParamsType, AnnotationEditorType, AnnotationEditorUIManager, AnnotationLayer, AnnotationMode, AnnotationType, CSSConstants, ColorPicker, DOMSVGFactory, DrawLayer, FeatureTest, GlobalWorkerOptions, ImageKind, InvalidPDFException, MathClamp, OPS, OutputScale, PDFDataRangeTransport, PDFDateString, PDFWorker, PasswordResponses, PermissionFlag, PixelsPerInch, RenderingCancelledException, ResponseException, SignatureExtractor, SupportedImageMimeTypes, TextLayer, TextLayerImages, TouchManager, Util, VerbosityLevel, XfaLayer, applyOpacity, build, createValidAbsoluteUrl, fetchData, findContrastColor, getDocument, getFilenameFromUrl, getPdfFilenameFromUrl, getRGB, getRGBA, getUuid, isDataScheme, isPdfFile, isValidExplicitDest, makeArr, makeMap, makeObj, noContextMenu, normalizeUnicode, renderRichText, setLayerDimensions, shadow, stopEvent, updateUrlHash, version };
+export { AbortException, AnnotationEditorLayer, AnnotationEditorParamsType, AnnotationEditorType, AnnotationEditorUIManager, AnnotationLayer, AnnotationMode, AnnotationType, CSSConstants, ColorPicker, DOMSVGFactory, DrawLayer, FeatureTest, GlobalWorkerOptions, ImageKind, InvalidPDFException, MathClamp, OPS, OutputScale, PDFDataRangeTransport, PDFDateString, PDFWorker, PasswordException, PasswordResponses, PermissionFlag, PixelsPerInch, RenderingCancelledException, ResponseException, SignatureExtractor, SupportedImageMimeTypes, TextLayer, TextLayerImages, TouchManager, Util, VerbosityLevel, XfaLayer, applyOpacity, build, createValidAbsoluteUrl, fetchData, findContrastColor, getDocument, getFilenameFromUrl, getPdfFilenameFromUrl, getRGB, getRGBA, getUuid, isDataScheme, isPdfFile, isValidExplicitDest, makeArr, makeMap, makeObj, noContextMenu, normalizeUnicode, renderRichText, setLayerDimensions, shadow, stopEvent, updateUrlHash, version };
 
 //# sourceMappingURL=pdf.mjs.map
