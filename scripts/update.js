@@ -57,20 +57,29 @@ function downloadFile(url, dest) {
 function patchViewerHtml() {
   const viewerPath = path.join(PDFJS_DIR, "web", "viewer.html");
   let html = fs.readFileSync(viewerPath, "utf8");
+  let changed = false;
+
+  if (html.includes('    <style id="viewer-less"></style>\n')) {
+    html = html.replace('    <style id="viewer-less"></style>\n', "");
+    changed = true;
+  }
 
   // Check if already patched
   if (html.includes("../../custom/viewer.css")) {
+    if (changed) {
+      fs.writeFileSync(viewerPath, html);
+    }
     console.log("viewer.html already patched");
     return;
   }
 
-  // Add custom CSS and viewer-less style element after viewer.css
+  // Add custom CSS after viewer.css
   html = html.replace(
     '<link rel="stylesheet" href="viewer.css" />',
     '<link rel="stylesheet" href="viewer.css" />\n' +
-      '    <link rel="stylesheet" href="../../custom/viewer.css">\n' +
-      '    <style id="viewer-less"></style>',
+      '    <link rel="stylesheet" href="../../custom/viewer.css">',
   );
+  changed = true;
 
   // Add custom JS after viewer.mjs (before </head>)
   html = html.replace(
@@ -78,8 +87,11 @@ function patchViewerHtml() {
     '<script src="viewer.mjs" type="module"></script>\n' +
       '    <script src="../../custom/viewer.js"></script>\n  </head>',
   );
+  changed = true;
 
-  fs.writeFileSync(viewerPath, html);
+  if (changed) {
+    fs.writeFileSync(viewerPath, html);
+  }
   console.log("Patched viewer.html with custom CSS/JS");
 }
 

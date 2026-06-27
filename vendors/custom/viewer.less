@@ -63,6 +63,13 @@
   border-right: solid 1px var(--toolbar-border-color);
 }
 
+.pdf-viewer-invert-mode {
+  .page,
+  .thumbnailImage {
+    filter: invert(100%);
+  }
+}
+
 // Disable Chromium's default focus outline in PDF viewer
 #outerContainer :focus-visible {
   outline: none !important;

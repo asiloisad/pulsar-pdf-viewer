@@ -476,9 +476,11 @@ function findAgain(findPrevious) {
 let stateInvertMode;
 
 function toggleInvertMode(data) {
-  stateInvertMode = data ? data.initial : !stateInvertMode;
-  css = stateInvertMode
-    ? ".page, .thumbnailImage {filter: invert(100%);}"
-    : ".page, .thumbnailImage {filter: invert(0%);}";
-  document.getElementById("viewer-less").innerText = css;
+  stateInvertMode = data && Object.hasOwn(data, "initial")
+    ? data.initial
+    : !stateInvertMode;
+  document.documentElement.classList.toggle(
+    "pdf-viewer-invert-mode",
+    Boolean(stateInvertMode)
+  );
 }
