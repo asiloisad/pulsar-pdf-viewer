@@ -68,6 +68,7 @@ window.onload = () => {
   parent.postMessage({ type: "ready" });
 
   PDFViewerApplication.eventBus.on("pagesinit", async () => {
+    cachedOutline = null;
     const outline = await PDFViewerApplication.pdfDocument.getOutline();
 
     if (outline) {
@@ -345,6 +346,7 @@ function refreshContents(data) {
   }
   // Clear any pending refresh since we're doing it now
   pendingRefreshData = null;
+  cachedOutline = null;
   if (PDFViewerApplication.pagesCount > 1) {
     lastParams.page = PDFViewerApplication.page;
     lastParams.zoom = PDFViewerApplication.pdfViewer.currentScaleValue;
