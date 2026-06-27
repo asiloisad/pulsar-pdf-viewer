@@ -63,6 +63,7 @@ window.onload = () => {
   PDFViewerApplicationOptions.set("externalLinkTarget", 4);
   PDFViewerApplicationOptions.set("isEvalSupported", false);
   PDFViewerApplicationOptions.set("disableHistory", true);
+  PDFViewerApplicationOptions.set("verbosity", 0);
   setupVisibilityObserver();
   parent.postMessage({ type: "ready" });
 

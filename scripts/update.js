@@ -126,6 +126,21 @@ function patchViewerMjs() {
     console.warn("Warning: Could not find textLayer focus pattern in viewer.mjs");
   }
 
+  // Suppress noisy PDF.js warnings from malformed embedded fonts.
+  const verbosityPattern = /verbosity:\s*\{\s*value:\s*1,\s*kind:\s*OptionKind\.API\s*\}/;
+  if (verbosityPattern.test(content)) {
+    content = content.replace(
+      verbosityPattern,
+      "verbosity: {\n    value: 0,\n    kind: OptionKind.API\n  }",
+    );
+    changed = true;
+    console.log("Patched viewer.mjs: default verbosity set to errors only");
+  } else if (/verbosity:\s*\{\s*value:\s*0,\s*kind:\s*OptionKind\.API\s*\}/.test(content)) {
+    console.log("viewer.mjs already patched: default verbosity is errors only");
+  } else {
+    console.warn("Warning: Could not find verbosity pattern in viewer.mjs");
+  }
+
   if (changed) {
     fs.writeFileSync(viewerPath, content);
   }
