@@ -6,7 +6,27 @@
 
 * {
   box-sizing: inherit;
-  font-family: @font-family
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: @font-family;
+}
+
+.textLayer.selectionRendering {
+  ::-moz-selection {
+    background: transparent !important;
+    color: transparent !important;
+  }
+
+  ::selection {
+    background: transparent !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
 }
 
 :root {
